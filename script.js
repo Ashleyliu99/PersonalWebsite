@@ -1,29 +1,29 @@
 // ============================================================
-//  项目数据 —— 在这里编辑你的项目即可，无需改动 HTML
-//  emoji: 卡片占位图标（也可改成 image: "图片地址" 显示真实截图）
-//  links: { github / demo / report 任选，留空则不显示）
+//  PROJECT DATA — edit your projects here, no need to touch HTML
+//  emoji: placeholder icon (or use image: "path/to.png" for a real screenshot)
+//  links: { github / demo / report } — any subset; empty ones are hidden
 // ============================================================
 const projects = [
   {
-    emoji: "🏅",
-    title: "奥运会运动员数据分析",
-    desc: "对历届奥运会运动员数据进行探索性分析，挖掘年龄、身高、国家与奖牌之间的关系，并用可视化呈现趋势。",
-    tags: ["Python", "Pandas", "Seaborn", "EDA"],
+    emoji: "📊",
+    title: "Financial Performance Dashboard",
+    desc: "Interactive dashboard analyzing revenue, margins, and key financial KPIs to support data-driven decision-making for management reporting.",
+    tags: ["Power BI", "SQL", "Financial Analysis"],
+    links: { github: "#", demo: "#" },
+  },
+  {
+    emoji: "⚠️",
+    title: "Credit Risk Assessment Model",
+    desc: "Exploratory analysis and modeling of credit risk indicators to identify high-risk segments and support compliance and risk monitoring.",
+    tags: ["Python", "Pandas", "Risk Analytics"],
     links: { github: "#", report: "#" },
   },
   {
     emoji: "📈",
-    title: "Facebook 股价走势可视化",
-    desc: "分析 2018 年 Facebook 股价数据，绘制移动平均线、波动率与关键事件标注，展示时间序列可视化技巧。",
-    tags: ["Python", "Matplotlib", "时间序列"],
+    title: "Stock Price Trend Visualization",
+    desc: "Time-series analysis of stock price data with moving averages, volatility, and event annotations to surface market trends.",
+    tags: ["Python", "Matplotlib", "Time Series"],
     links: { github: "#" },
-  },
-  {
-    emoji: "🏠",
-    title: "Ames 房价数据探索",
-    desc: "基于 Ames Housing 数据集进行特征分析与相关性研究，识别影响房价的关键因素。",
-    tags: ["Python", "Pandas", "数据清洗"],
-    links: { github: "#", demo: "#" },
   },
 ];
 
