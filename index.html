@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yajie Liu · Portfolio</title>
+  <meta name="description" content="Yajie Liu 的个人作品集 —— 数据分析与可视化项目展示。" />
+
+  <!-- 社交分享预览 (可选，替换成你自己的信息) -->
+  <meta property="og:title" content="Yajie Liu · Portfolio" />
+  <meta property="og:description" content="数据分析与可视化项目展示" />
+  <meta property="og:type" content="website" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- 顶部导航 -->
+  <header class="nav">
+    <div class="container nav__inner">
+      <a href="#top" class="nav__logo">YL</a>
+      <nav class="nav__links">
+        <a href="#about">关于</a>
+        <a href="#projects">项目</a>
+        <a href="#contact">联系</a>
+        <button id="theme-toggle" class="theme-toggle" aria-label="切换深色/浅色模式">🌙</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section id="top" class="hero">
+    <div class="container">
+      <p class="hero__eyebrow">数据分析师 · Data Analyst</p>
+      <h1 class="hero__title">你好，我是 <span class="accent">Yajie Liu</span>。</h1>
+      <p class="hero__subtitle">
+        我用数据讲故事 —— 从清洗、探索性分析到可视化，
+        把复杂的数据变成清晰、可行动的洞察。
+      </p>
+      <div class="hero__actions">
+        <a href="#projects" class="btn btn--primary">查看项目 →</a>
+        <a href="#contact" class="btn btn--ghost">联系我</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section id="about" class="section">
+    <div class="container">
+      <h2 class="section__title">关于我</h2>
+      <div class="about">
+        <div class="about__text">
+          <p>
+            我是一名专注于数据分析与可视化的从业者，擅长用 Python
+            （Pandas、Matplotlib、Seaborn）进行探索性数据分析，
+            并将结果转化为易懂的图表与报告。
+          </p>
+          <p>
+            热衷于从真实数据中发现规律，无论是体育赛事、股票走势还是房价数据，
+            我都喜欢挖掘背后的故事。
+          </p>
+        </div>
+        <div class="about__skills">
+          <h3>技能</h3>
+          <ul class="skills">
+            <li>Python</li>
+            <li>Pandas</li>
+            <li>Matplotlib</li>
+            <li>Seaborn</li>
+            <li>SQL</li>
+            <li>Jupyter</li>
+            <li>数据可视化</li>
+            <li>EDA</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Projects -->
+  <section id="projects" class="section section--alt">
+    <div class="container">
+      <h2 class="section__title">项目作品集</h2>
+      <p class="section__lead">以下是部分项目示例，请替换为你自己的真实项目。</p>
+
+      <!-- 项目卡片由 JS 从下方数据生成；也可直接在 script.js 里编辑 -->
+      <div id="project-grid" class="project-grid"></div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" class="section">
+    <div class="container contact">
+      <h2 class="section__title">联系我</h2>
+      <p class="section__lead">欢迎通过以下方式与我取得联系。</p>
+      <div class="contact__links">
+        <a href="mailto:yajieliu1234@gmail.com" class="contact__link">✉️ Email</a>
+        <a href="https://github.com/" target="_blank" rel="noopener" class="contact__link">🐙 GitHub</a>
+        <a href="https://www.linkedin.com/" target="_blank" rel="noopener" class="contact__link">💼 LinkedIn</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <p>© <span id="year"></span> Yajie Liu · 使用 HTML/CSS/JS 构建 · 托管于 GitHub Pages</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
