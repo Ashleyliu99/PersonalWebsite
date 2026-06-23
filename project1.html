@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Financial Performance Dashboard · Yajie Liu</title>
+  <meta name="description" content="Interactive Power BI financial performance dashboard by Yajie Liu, CPA — revenue, margins, and key KPIs." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Nav -->
+  <header class="nav">
+    <div class="container nav__inner">
+      <a href="index.html" class="nav__logo">YL</a>
+      <nav class="nav__links">
+        <a href="index.html#projects">← Back to Projects</a>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark/light mode">🌙</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Project header -->
+  <section class="section" style="padding-bottom: 24px;">
+    <div class="container">
+      <p class="hero__eyebrow">Power BI · Financial Analysis</p>
+      <h1 class="section__title">Financial Performance Dashboard</h1>
+      <p class="section__lead" style="max-width: 720px;">
+        An interactive Power BI dashboard analyzing revenue, margins, and key financial
+        KPIs to support data-driven decision-making and management reporting. Scroll
+        down to view both pages — no sign-in required.
+      </p>
+      <div class="card__tags" style="margin-bottom: 24px;">
+        <span class="card__tag">Power BI</span>
+        <span class="card__tag">Financial Analysis</span>
+        <span class="card__tag">Data Modelling</span>
+        <span class="card__tag">DAX</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dashboard display -->
+  <section class="section" style="padding-top: 0;">
+    <div class="container">
+      <h3 class="shot-label">Page 1 — Dashboard View</h3>
+      <a href="images/powerbi-dashboard-page1.jpg" target="_blank" rel="noopener" class="shot" title="Open page 1 full size">
+        <img src="images/powerbi-dashboard-page1.jpg" alt="Financial Performance Dashboard — dashboard view" />
+      </a>
+
+      <h3 class="shot-label">Page 2 — Feature Overview</h3>
+      <a href="images/powerbi-dashboard-page2.jpg" target="_blank" rel="noopener" class="shot" title="Open page 2 full size">
+        <img src="images/powerbi-dashboard-page2.jpg" alt="Financial Performance Dashboard — annotated feature overview" />
+      </a>
+
+      <p class="pdf-note">Click either page to view it full size.</p>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <p>© <span id="year"></span> Yajie Liu, CPA · Built with HTML/CSS/JS · Hosted on GitHub Pages</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

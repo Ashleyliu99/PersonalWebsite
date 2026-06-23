@@ -5,25 +5,27 @@
 // ============================================================
 const projects = [
   {
-    emoji: "📊",
+    image: "images/powerbi-dashboard.jpg",
     title: "Financial Performance Dashboard",
-    desc: "Interactive dashboard analyzing revenue, margins, and key financial KPIs to support data-driven decision-making for management reporting.",
-    tags: ["Power BI", "SQL", "Financial Analysis"],
-    links: { github: "#", demo: "#" },
+    desc: "Interactive Power BI dashboard analyzing revenue, margins, and key financial KPIs to support data-driven decision-making and management reporting.",
+    tags: ["Power BI", "Financial Analysis", "Data Modelling", "DAX"],
+    // Opens the public demo page that shows the dashboard image + PDF (no sign-in needed).
+    links: { demo: "project1.html" },
   },
   {
-    emoji: "⚠️",
-    title: "Credit Risk Assessment Model",
-    desc: "Exploratory analysis and modeling of credit risk indicators to identify high-risk segments and support compliance and risk monitoring.",
-    tags: ["Python", "Pandas", "Risk Analytics"],
-    links: { github: "#", report: "#" },
+    image: "images/loan-portfolio-dashboard.png",
+    title: "Loan Portfolio Risk Dashboard",
+    desc: "Interactive Streamlit app assessing loan portfolio credit risk — exploring default drivers and high-risk segments to support risk monitoring and decisions.",
+    tags: ["Python", "Portfolio Monitoring", "Risk Analytics", "Live App"],
+    links: { demo: "https://loan-portfolio-risk-dashboard-yajie.streamlit.app/" },
   },
   {
-    emoji: "📈",
-    title: "Stock Price Trend Visualization",
-    desc: "Time-series analysis of stock price data with moving averages, volatility, and event annotations to surface market trends.",
-    tags: ["Python", "Matplotlib", "Time Series"],
-    links: { github: "#" },
+    emoji: "🏘️",
+    upcoming: true,
+    title: "Real Estate Analytics Platform",
+    desc: "Interactive analytics platform using SQL databases to support decision-making through personalized property recommendations, pricing analytics, and market intelligence.",
+    tags: ["SQL", "Database Design", "Predictive", "Recommendation"],
+    links: {},
   },
 ];
 
@@ -34,32 +36,36 @@ function renderProjects() {
 
   grid.innerHTML = projects
     .map((p) => {
+      const badge = p.upcoming ? `<span class="card__badge">Upcoming</span>` : "";
       const thumb = p.image
-        ? `<div class="card__thumb" style="background-image:url('${p.image}');background-size:cover;background-position:center"></div>`
-        : `<div class="card__thumb">${p.emoji || "📦"}</div>`;
+        ? `<div class="card__thumb" style="background-image:url('${p.image}');background-size:cover;background-position:center">${badge}</div>`
+        : `<div class="card__thumb">${p.emoji || "📦"}${badge}</div>`;
 
       const tags = (p.tags || [])
         .map((t) => `<span class="card__tag">${t}</span>`)
         .join("");
 
-      const linkMap = { github: "GitHub ↗", demo: "Demo ↗", report: "报告 ↗" };
-      const links = Object.entries(p.links || {})
-        .map(
-          ([key, url]) =>
-            `<a href="${url}" target="_blank" rel="noopener">${linkMap[key] || key}</a>`
-        )
-        .join("");
+      const linkMap = { demo: "View Dashboard", report: "View Report (PDF)", github: "View on GitHub" };
+      // The whole card links to its primary destination (demo > report > github).
+      const [key, url] = Object.entries(p.links || {})[0] || [];
+      const cta = p.upcoming ? "Coming soon" : key ? `${linkMap[key] || "View"} →` : "";
+      // External (http) links open in a new tab; internal pages open in the same tab.
+      const external = url && /^https?:\/\//.test(url);
+      const attrs = url && !p.upcoming
+        ? `href="${url}"${external ? ' target="_blank" rel="noopener"' : ""}`
+        : "";
 
+      const tag = attrs ? "a" : "div";
       return `
-        <article class="card">
+        <${tag} class="card${p.upcoming ? " card--upcoming" : ""}" ${attrs}>
           ${thumb}
           <div class="card__body">
             <h3 class="card__title">${p.title}</h3>
             <p class="card__desc">${p.desc}</p>
             <div class="card__tags">${tags}</div>
-            <div class="card__links">${links}</div>
+            <div class="card__links"><span>${cta}</span></div>
           </div>
-        </article>`;
+        </${tag}>`;
     })
     .join("");
 }
