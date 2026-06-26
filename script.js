@@ -6,7 +6,7 @@
 const projects = [
   {
     image: "images/powerbi-dashboard.jpg",
-    title: "Financial Performance Dashboard",
+    title: "Financial Performance Dashboard Showcase",
     desc: "Interactive Power BI dashboard analyzing revenue, margins, and key financial KPIs to support data-driven decision-making and management reporting.",
     tags: ["Power BI", "Financial Analysis", "Data Modelling", "DAX"],
     // Opens the public demo page that shows the dashboard image + PDF (no sign-in needed).
@@ -17,7 +17,7 @@ const projects = [
     title: "Loan Portfolio Risk Dashboard",
     desc: "Interactive Streamlit app assessing loan portfolio credit risk — exploring default drivers and high-risk segments to support risk monitoring and decisions.",
     tags: ["Python", "Portfolio Monitoring", "Risk Analytics", "Live App"],
-    links: { demo: "https://loan-portfolio-risk-dashboard-yajie.streamlit.app/" },
+    links: { demo: "project2.html" },
   },
   {
     emoji: "🏘️",

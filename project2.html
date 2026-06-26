@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Loan Portfolio Risk Dashboard · Yajie Liu</title>
+  <meta name="description" content="Interactive Streamlit app by Yajie Liu assessing loan portfolio credit risk — default drivers, high-risk segments, and risk monitoring." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Nav -->
+  <header class="nav">
+    <div class="container nav__inner">
+      <a href="index.html" class="nav__logo">YL</a>
+      <nav class="nav__links">
+        <a href="index.html#projects">← Back to Projects</a>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark/light mode">🌙</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Project header -->
+  <section class="section" style="padding-bottom: 24px;">
+    <div class="container">
+      <p class="hero__eyebrow">Python · Risk Analytics</p>
+      <h1 class="section__title">Loan Portfolio Risk Dashboard</h1>
+      <p class="section__lead" style="max-width: 720px;">
+        This dashboard provides continuous visibility into <strong>changes in</strong> <strong>loan portfolio risk</strong> through
+        <strong>delinquency trends</strong>, <strong>roll-rate migration analysis</strong>, and <strong>expected loss monitoring</strong>. It helps
+        stakeholders <strong>detect deteriorating credit quality</strong> early, <strong>identify emerging risk patterns</strong>,
+        and take timely risk mitigation actions.
+      </p>
+      <p class="section__lead" style="max-width: 720px;">
+        Built with <strong>Python and Streamlit</strong>, the app enables <strong>dynamic filtering</strong> and <strong>real-time exploration</strong>,
+        making it easy to identify risk patterns and take targeted action.
+      </p>
+      <div class="card__tags" style="margin-bottom: 24px;">
+        <span class="card__tag">Python</span>
+        <span class="card__tag">Portfolio Monitoring</span>
+        <span class="card__tag">Risk Analytics</span>
+        <span class="card__tag">Streamlit</span>
+      </div>
+      <a href="https://loan-portfolio-risk-dashboard-yajie.streamlit.app/" target="_blank" rel="noopener" class="btn btn--primary" style="display:inline-block; margin-bottom: 8px;">
+        Open App in a New Page ↗
+      </a>
+    </div>
+  </section>
+
+  <!-- Live app embed -->
+  <section class="section" style="padding-top: 0;">
+    <div class="container">
+      <h3 class="shot-label">Live App</h3>
+    </div>
+    <div style="
+      width: 100vw;
+      margin-left: calc(-50vw + 50%);
+      height: 1250px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    ">
+      <iframe
+        src="https://loan-portfolio-risk-dashboard-yajie.streamlit.app/?embed=true"
+        title="Loan Portfolio Risk Dashboard"
+        style="width: 100%; height: 100%; border: none; display: block;"
+        scrolling="no"
+        loading="lazy"
+        allow="fullscreen"
+      ></iframe>
+    </div>
+    <div class="container">
+      <p class="pdf-note" style="margin-top: 12px;">
+        Prefer full interactive view?
+        <a href="https://loan-portfolio-risk-dashboard-yajie.streamlit.app/" target="_blank" rel="noopener">Open in a new tab ↗</a>
+      </p>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <p>© <span id="year"></span> Yajie Liu, CPA · Built with HTML/CSS/JS · Hosted on GitHub Pages</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
