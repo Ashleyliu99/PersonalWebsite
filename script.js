@@ -14,7 +14,7 @@ const projects = [
   },
   {
     image: "Project 3/picture.png",
-    title: "Seattle Real Estate Analytics",
+    title: "Real Estate Analytics Database",
     desc: "End-to-end SQL project — database design, Python data pipeline, and business-driven queries analyzing pricing, market speed, and buyer/seller behavior.",
     tags: ["MySQL", "Database Design", "Python", "SQL Analytics"],
     links: { page: "Project 3/index.html" },
