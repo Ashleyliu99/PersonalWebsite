@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>🏦 Loan Portfolio Risk Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif;background:#F0F4F8;color:#111827;display:flex;min-height:100vh;font-size:13px}
+
+/* ── Sidebar ── */
+.sidebar{width:190px;min-width:190px;background:#1E3A5F;padding:1.2rem 0.9rem;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
+.sidebar-title{color:#fff;font-size:0.85rem;font-weight:700;margin-bottom:0.5rem}
+.sidebar hr{border:none;border-top:1px solid #2D5A8E;margin:0.55rem 0}
+.filter-label{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#93B8D8;margin:0.7rem 0 0.3rem}
+.sidebar select{width:100%;background:#2B4F7A;border:1px solid #3D6FA0;border-radius:5px;color:#CBD9EC;padding:.35rem .5rem;font-size:.75rem;cursor:pointer;outline:none}
+.sidebar select:focus{border-color:#60A5FA}
+.check-list{display:flex;flex-direction:column;gap:5px}
+.check-item{display:flex;align-items:center;gap:7px;cursor:pointer}
+.check-item input[type=checkbox]{width:13px;height:13px;accent-color:#3B82F6;cursor:pointer;flex-shrink:0}
+.check-item span{color:#CBD9EC;font-size:.75rem;line-height:1.3}
+
+/* ── Main ── */
+.main{flex:1;padding:1.2rem 1.4rem 1.5rem;min-width:0;display:flex;flex-direction:column;gap:0}
+
+/* ── Header ── */
+.page-title{text-align:center;color:#1E3A5F;font-size:1.65rem;font-weight:800;letter-spacing:-.02em;margin-bottom:.15rem}
+.page-sub{text-align:center;color:#6B7280;font-size:.82rem;margin-bottom:.85rem}
+
+/* ── KPI row ── */
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:.6rem}
+.kpi-card{background:#fff;border-radius:10px;padding:.8rem 1rem;border-left:5px solid;box-shadow:0 1px 5px rgba(0,0,0,.09)}
+.kpi-label{font-size:.63rem;color:#6B7280;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.3rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi-value{font-size:1.38rem;font-weight:800;color:#111827;line-height:1.1;white-space:nowrap}
+
+/* ── Divider ── */
+.divider{border:none;border-top:1.5px solid #DDE3EC;margin:.6rem 0}
+
+/* ── Charts ── */
+.chart-row{display:grid;grid-template-columns:1.15fr 1fr;gap:12px;margin-bottom:.6rem}
+.chart-card{background:#fff;border-radius:10px;padding:.8rem .9rem .7rem;box-shadow:0 1px 5px rgba(0,0,0,.07)}
+.chart-title{text-align:center;font-size:.78rem;font-weight:700;color:#1E3A5F;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.45rem}
+
+/* ── Heatmap ── */
+.heatmap-wrap{overflow-x:auto}
+.heatmap{width:100%;border-collapse:collapse;font-size:.75rem}
+.heatmap th{padding:6px 8px;text-align:center;font-weight:600;color:#374151;background:#F9FAFB;border:1px solid #E5E7EB;white-space:nowrap}
+.heatmap th.row-head{text-align:left}
+.heatmap td{padding:9px 6px;text-align:center;border:1px solid rgba(255,255,255,.3);font-weight:600;font-size:.78rem}
+.heatmap td.row-label{background:#F9FAFB!important;color:#374151;border:1px solid #E5E7EB;text-align:left;font-weight:600;white-space:nowrap}
+.heatmap-note{text-align:center;font-size:.65rem;color:#9CA3AF;margin-top:5px}
+
+/* ── Watchlist ── */
+.watchlist-card{background:#fff;border-radius:10px;padding:.75rem .9rem;box-shadow:0 1px 5px rgba(0,0,0,.07)}
+.watchlist-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem}
+.watchlist-title{font-size:.78rem;font-weight:700;color:#1E3A5F;text-transform:uppercase;letter-spacing:.06em}
+.btn-dl{background:#1E3A5F;color:#fff;border:none;border-radius:6px;padding:.38rem .9rem;font-size:.75rem;font-weight:600;cursor:pointer;transition:background .2s}
+.btn-dl:hover{background:#2D5A8E}
+.data-table{width:100%;border-collapse:collapse;font-size:.74rem}
+.data-table thead th{background:#1E3A5F;color:#fff;padding:6px 10px;text-align:left;font-weight:600;white-space:nowrap}
+.data-table tbody tr:nth-child(even){background:#F9FAFB}
+.data-table tbody tr:hover{background:#EFF6FF}
+.data-table tbody td{padding:5px 10px;border-bottom:1px solid #F0F4F8;color:#374151;white-space:nowrap}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.d-high{color:#EF4444;font-weight:700}
+.d-med{color:#F59E0B;font-weight:700}
+.d-ok{color:#10B981;font-weight:600}
+
+/* ── Loader ── */
+#loader{position:fixed;inset:0;background:#F0F4F8;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;gap:14px;padding:2rem;text-align:center}
+.spinner{width:42px;height:42px;border:4px solid #DDE3EC;border-top-color:#1E3A5F;border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#loader p{color:#6B7280;font-size:.88rem;max-width:440px;line-height:1.65}
+.err-box{background:#FEF2F2;border:1px solid #FECACA;border-radius:10px;padding:1.2rem 1.5rem;max-width:480px;text-align:left}
+.err-box h3{color:#B91C1C;font-size:.95rem;margin-bottom:.5rem}
+.err-box p{color:#6B7280;font-size:.82rem;margin-bottom:.4rem;line-height:1.55}
+.err-box code{background:#FEE2E2;padding:2px 6px;border-radius:4px;font-family:monospace;font-size:.78rem;color:#991B1B}
+</style>
+</head>
+<body>
+
+<div id="loader">
+  <div class="spinner"></div>
+  <p>Loading portfolio data…</p>
+</div>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar-title">🏦 Filters</div>
+  <hr/>
+  <div class="filter-label">Reporting Month</div>
+  <select id="selMonth"></select>
+  <div class="filter-label">Region</div>
+  <div class="check-list" id="regionList"></div>
+  <div class="filter-label">Product Type</div>
+  <div class="check-list" id="productList"></div>
+</aside>
+
+<!-- Main -->
+<main class="main">
+  <h1 class="page-title">🏦 Loan Portfolio Risk Dashboard</h1>
+  <p class="page-sub">Monthly snapshot · Risk monitoring &amp; delinquency analysis</p>
+
+  <!-- KPIs -->
+  <div class="kpi-row">
+    <div class="kpi-card" style="border-left-color:#3B82F6"><div class="kpi-label">Active Loans</div><div class="kpi-value" id="kLoans">—</div></div>
+    <div class="kpi-card" style="border-left-color:#10B981"><div class="kpi-label">Portfolio Balance</div><div class="kpi-value" id="kBalance">—</div></div>
+    <div class="kpi-card" style="border-left-color:#F59E0B"><div class="kpi-label">30+ Delinquency</div><div class="kpi-value" id="kDelq30">—</div></div>
+    <div class="kpi-card" style="border-left-color:#EF4444"><div class="kpi-label">90+ Delinquency</div><div class="kpi-value" id="kDelq90">—</div></div>
+    <div class="kpi-card" style="border-left-color:#8B5CF6"><div class="kpi-label">Expected Loss</div><div class="kpi-value" id="kEL">—</div></div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- Charts -->
+  <div class="chart-row">
+    <div class="chart-card">
+      <div class="chart-title">Delinquency Trend</div>
+      <canvas id="trendChart" height="260"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Roll-Rate Migration Matrix</div>
+      <div class="heatmap-wrap"><table class="heatmap" id="heatmap"></table></div>
+      <p class="heatmap-note">Row = Previous Month Bucket &nbsp;·&nbsp; Column = Current Month Bucket</p>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- Watchlist -->
+  <div class="watchlist-card">
+    <div class="watchlist-head">
+      <div class="watchlist-title">Top 10 Loans by Expected Loss</div>
+      <button class="btn-dl" id="btnDl">⬇ Download Watchlist CSV</button>
+    </div>
+    <table class="data-table">
+      <thead><tr>
+        <th>Loan ID</th><th>Product</th><th>Region</th>
+        <th>FICO Score</th><th>Days Past Due</th><th>Balance</th>
+        <th>PD</th><th>LGD</th><th>Expected Loss</th>
+      </tr></thead>
+      <tbody id="watchlistBody"></tbody>
+    </table>
+  </div>
+</main>
+
+<script>
+// ── State ─────────────────────────────────────────────────────────────
+let raw       = [];
+let selMonth  = '2025-10-31';
+let regions   = new Set();
+let products  = new Set();
+let trendChart = null;
+let watchRows  = [];
+
+// ── Helpers ───────────────────────────────────────────────────────────
+const $  = id => document.getElementById(id);
+const N  = v  => Math.round(+v).toLocaleString('en-US');
+const P  = v  => (v * 100).toFixed(2) + '%';
+const D  = v  => '$' + N(v);
+
+function pd(dpd, fico) {
+  dpd = +dpd; fico = +fico;
+  if (dpd >= 90)   return 0.70;
+  if (dpd >= 60)   return 0.35;
+  if (dpd >= 30)   return 0.15;
+  if (fico >= 720) return 0.01;
+  if (fico >= 680) return 0.03;
+  return 0.06;
+}
+const lgd    = s => +s === 1 ? 0.35 : 0.65;
+const bucket = d => { d=+d; return d<30?'Current':d<60?'30-59':d<90?'60-89':'90+'; };
+const mk     = s => s ? s.substring(0,7) : '';  // YYYY-MM
+
+function prevMK(dateStr) {
+  const [y,m] = dateStr.substring(0,7).split('-').map(Number);
+  return m===1 ? (y-1)+'-12' : y+'-'+String(m-1).padStart(2,'0');
+}
+
+function monthLabel(dateStr) {
+  const [y,m] = dateStr.substring(0,7).split('-').map(Number);
+  return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][m-1]+' '+y;
+}
+
+function heatColor(v) {
+  const L=(a,b,t)=>Math.round(a+(b-a)*t);
+  const c1=[239,246,255], c2=[59,130,246], c3=[30,58,95];
+  const [s,e,t] = v<=.5 ? [c1,c2,v*2] : [c2,c3,(v-.5)*2];
+  return `rgb(${L(s[0],e[0],t)},${L(s[1],e[1],t)},${L(s[2],e[2],t)})`;
+}
+const heatText = v => v > 0.38 ? '#fff' : '#1E3A5F';
+
+// ── Filtered rows ─────────────────────────────────────────────────────
+function getRows(monthStr) {
+  return raw.filter(r =>
+    r.as_of_month === monthStr &&
+    regions.has(r.region) &&
+    products.has(r.product_type)
+  );
+}
+
+function enrich(rows) {
+  return rows.map(r => {
+    const PD  = pd(r.dpd, r.fico_score);
+    const LGD = lgd(r.secured_flag);
+    const bal = +r.ending_balance || 0;
+    return {...r, PD, LGD, EAD: bal, EL: PD * LGD * bal};
+  });
+}
+
+// ── KPIs ──────────────────────────────────────────────────────────────
+function renderKPIs(rich) {
+  const tot   = rich.reduce((s,r)=>s+r.EAD, 0);
+  const d30   = rich.filter(r=>+r.dpd>=30).reduce((s,r)=>s+r.EAD, 0);
+  const d90   = rich.filter(r=>+r.dpd>=90).reduce((s,r)=>s+r.EAD, 0);
+  const el    = rich.reduce((s,r)=>s+r.EL, 0);
+  const loans = new Set(rich.map(r=>r.loan_id)).size;
+  $('kLoans').textContent   = loans.toLocaleString();
+  $('kBalance').textContent = D(tot);
+  $('kDelq30').textContent  = tot>0 ? P(d30/tot) : '0.00%';
+  $('kDelq90').textContent  = tot>0 ? P(d90/tot) : '0.00%';
+  $('kEL').textContent      = D(el);
+}
+
+// ── Trend chart ───────────────────────────────────────────────────────
+function renderTrend() {
+  const endMK = mk(selMonth);
+  const [ey,em] = endMK.split('-').map(Number);
+
+  const keys = [];
+  for (let i=12; i>=0; i--) {
+    let m=em-i, y=ey;
+    while(m<=0){m+=12;y--;}
+    keys.push(y+'-'+String(m).padStart(2,'0'));
+  }
+
+  const labels=[], d30=[], d60=[], d90=[];
+  keys.forEach(k=>{
+    const rows = raw.filter(r=>
+      mk(r.as_of_month)===k &&
+      regions.has(r.region) &&
+      products.has(r.product_type)
+    );
+    if(!rows.length) return;
+    const tot = rows.reduce((s,r)=>s+(+r.ending_balance||0), 0);
+    if(!tot) return;
+    labels.push(monthLabel(rows[0].as_of_month));
+    d30.push(rows.filter(r=>+r.dpd>=30).reduce((s,r)=>s+(+r.ending_balance||0),0)/tot);
+    d60.push(rows.filter(r=>+r.dpd>=60).reduce((s,r)=>s+(+r.ending_balance||0),0)/tot);
+    d90.push(rows.filter(r=>+r.dpd>=90).reduce((s,r)=>s+(+r.ending_balance||0),0)/tot);
+  });
+
+  if(trendChart){trendChart.destroy();trendChart=null;}
+  trendChart = new Chart($('trendChart'),{
+    type:'line',
+    data:{
+      labels,
+      datasets:[
+        {label:'30+ DPD',data:d30,borderColor:'#3B82F6',backgroundColor:'rgba(59,130,246,.06)',tension:.35,borderWidth:2.5,pointRadius:5,pointBackgroundColor:'#3B82F6',fill:false},
+        {label:'60+ DPD',data:d60,borderColor:'#93C5FD',backgroundColor:'transparent',tension:.35,borderWidth:2.5,pointRadius:5,pointBackgroundColor:'#93C5FD',fill:false},
+        {label:'90+ DPD',data:d90,borderColor:'#EF4444',backgroundColor:'rgba(239,68,68,.05)',tension:.35,borderWidth:2.5,pointRadius:5,pointBackgroundColor:'#EF4444',fill:false},
+      ]
+    },
+    options:{
+      responsive:true,
+      plugins:{
+        legend:{position:'top',align:'start',labels:{boxWidth:10,font:{size:10},padding:10}},
+        tooltip:{
+          backgroundColor:'#1E3A5F',padding:10,cornerRadius:8,
+          callbacks:{label:ctx=>' '+ctx.dataset.label+': '+(ctx.raw*100).toFixed(2)+'%'}
+        }
+      },
+      scales:{
+        x:{grid:{display:false},ticks:{font:{size:10},maxRotation:40,minRotation:0,
+          callback:(val,i,ticks)=>i%2===0||i===ticks.length-1?labels[i]:null
+        }},
+        y:{grid:{color:'#F0F4F8'},min:0,max:0.045,
+          ticks:{font:{size:10},callback:v=>(v*100).toFixed(1)+'%'}}
+      }
+    }
+  });
+}
+
+// ── Roll-Rate Heatmap ─────────────────────────────────────────────────
+function renderHeatmap() {
+  const currMK   = mk(selMonth);
+  const prevMKStr = prevMK(selMonth);
+  const BUCKETS  = ['Current','30-59','60-89','90+'];
+
+  const loanMap = {};
+  raw.forEach(r=>{
+    if(!regions.has(r.region)||!products.has(r.product_type)) return;
+    const m = mk(r.as_of_month);
+    if(m!==currMK && m!==prevMKStr) return;
+    if(!loanMap[r.loan_id]) loanMap[r.loan_id]={};
+    loanMap[r.loan_id][m]=r;
+  });
+
+  const mat = Array.from({length:4},()=>Array(4).fill(0));
+  Object.values(loanMap).forEach(loan=>{
+    const p=loan[prevMKStr], c=loan[currMK];
+    if(!p||!c) return;
+    const pi=BUCKETS.indexOf(bucket(+p.dpd));
+    const ci=BUCKETS.indexOf(bucket(+c.dpd));
+    if(pi>=0&&ci>=0) mat[pi][ci]++;
+  });
+
+  const rat = mat.map(row=>{
+    const tot=row.reduce((a,b)=>a+b,0);
+    return tot>0 ? row.map(v=>v/tot) : row.map(()=>0);
+  });
+
+  let html='<thead><tr><th class="row-head">Prev ╲ Curr</th>';
+  BUCKETS.forEach(b=>{html+='<th>'+b+'</th>';});
+  html+='</tr></thead><tbody>';
+  rat.forEach((row,ri)=>{
+    html+='<tr><td class="row-label">'+BUCKETS[ri]+'</td>';
+    row.forEach(v=>{
+      html+='<td style="background:'+heatColor(v)+';color:'+heatText(v)+'">'+(v*100).toFixed(1)+'%</td>';
+    });
+    html+='</tr>';
+  });
+  html+='</tbody>';
+  $('heatmap').innerHTML=html;
+}
+
+// ── Watchlist ─────────────────────────────────────────────────────────
+function renderWatchlist(rich) {
+  watchRows = [...rich].sort((a,b)=>b.EL-a.EL).slice(0,10);
+  $('watchlistBody').innerHTML = watchRows.map(r=>{
+    const dpd=+r.dpd;
+    const cls=dpd>=90?'d-high':dpd>=30?'d-med':'d-ok';
+    return '<tr>'+
+      '<td>'+r.loan_id+'</td>'+
+      '<td>'+r.product_type+'</td>'+
+      '<td>'+r.region+'</td>'+
+      '<td class="num">'+r.fico_score+'</td>'+
+      '<td class="num '+cls+'">'+dpd+'</td>'+
+      '<td class="num">'+D(+r.ending_balance)+'</td>'+
+      '<td class="num">'+(r.PD*100).toFixed(0)+'%</td>'+
+      '<td class="num">'+(r.LGD*100).toFixed(0)+'%</td>'+
+      '<td class="num" style="font-weight:700;color:#1E3A5F">'+D(r.EL)+'</td>'+
+      '</tr>';
+  }).join('');
+}
+
+// ── Download CSV ──────────────────────────────────────────────────────
+$('btnDl').addEventListener('click',()=>{
+  if(!watchRows.length) return;
+  const hdr='Loan ID,Product,Region,FICO Score,Days Past Due,Balance,PD,LGD,Expected Loss';
+  const body=watchRows.map(r=>
+    [r.loan_id,r.product_type,r.region,r.fico_score,r.dpd,
+     (+r.ending_balance).toFixed(2),
+     (r.PD*100).toFixed(0)+'%',(r.LGD*100).toFixed(0)+'%',
+     r.EL.toFixed(2)].join(',')
+  );
+  const csv=[hdr,...body].join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='watchlist_top10_'+selMonth+'.csv';
+  a.click();
+});
+
+// ── Render all ────────────────────────────────────────────────────────
+function renderAll() {
+  const rich = enrich(getRows(selMonth));
+  renderKPIs(rich);
+  renderTrend();
+  renderHeatmap();
+  renderWatchlist(rich);
+}
+
+// ── Build sidebar ─────────────────────────────────────────────────────
+function buildSidebar(months, regArr, prodArr) {
+  const sel = $('selMonth');
+  months.forEach(m=>{
+    const opt=document.createElement('option');
+    opt.value=m; opt.textContent=monthLabel(m);
+    if(m===selMonth) opt.selected=true;
+    sel.appendChild(opt);
+  });
+  sel.addEventListener('change',()=>{selMonth=sel.value;renderAll();});
+
+  function makeChecks(containerId, items, stateSet) {
+    const wrap=$(containerId);
+    items.forEach(item=>{
+      stateSet.add(item);
+      const label=document.createElement('label');
+      label.className='check-item';
+      const cb=document.createElement('input');
+      cb.type='checkbox'; cb.checked=true;
+      cb.addEventListener('change',()=>{
+        cb.checked?stateSet.add(item):stateSet.delete(item);
+        renderAll();
+      });
+      const span=document.createElement('span');
+      span.textContent=item;
+      label.append(cb,span);
+      wrap.appendChild(label);
+    });
+  }
+  makeChecks('regionList',  regArr,  regions);
+  makeChecks('productList', prodArr, products);
+}
+
+// ── Error display ─────────────────────────────────────────────────────
+function showError(msg) {
+  $('loader').innerHTML=
+    '<div class="err-box">'+
+    '<h3>⚠ Unable to load data</h3>'+
+    '<p>'+msg+'</p>'+
+    '<p>This dashboard must be served over HTTP (not opened as a local file).<br>'+
+    'It loads correctly on GitHub Pages.</p>'+
+    '</div>';
+}
+
+// ── Load CSV ──────────────────────────────────────────────────────────
+Papa.parse('loan_snapshot_monthly.csv',{
+  download:true,
+  header:true,
+  skipEmptyLines:true,
+  complete(res){
+    try{
+      raw = res.data.filter(r=>r.loan_id && r.as_of_month);
+      const months  = [...new Set(raw.map(r=>r.as_of_month))].sort();
+      const regArr  = [...new Set(raw.map(r=>r.region))].filter(Boolean).sort();
+      const prodArr = [...new Set(raw.map(r=>r.product_type))].filter(Boolean).sort();
+      if(!months.includes(selMonth)) selMonth = months[months.length-1];
+      buildSidebar(months, regArr, prodArr);
+      renderAll();
+      $('loader').style.display='none';
+    }catch(e){
+      showError('Data processing error: '+e.message);
+    }
+  },
+  error(err){
+    showError('Could not fetch loan_snapshot_monthly.csv — '+((err&&err.message)||'network error'));
+  }
+});
+</script>
+</body>
+</html>

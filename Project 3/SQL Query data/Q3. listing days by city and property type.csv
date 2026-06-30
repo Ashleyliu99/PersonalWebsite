@@ -1,0 +1,28 @@
+city,property_type,total_sold,avg_days_on_market
+Kirkland,SINGLE_FAMILY,24,39.8
+Sammamish,SINGLE_FAMILY,6,40.0
+Redmond,SINGLE_FAMILY,25,42.0
+Seattle,SINGLE_FAMILY,44,46.9
+Bellevue,SINGLE_FAMILY,30,51.0
+"Mercer Island",SINGLE_FAMILY,9,52.9
+Renton,SINGLE_FAMILY,17,55.6
+Issaquah,SINGLE_FAMILY,10,57.0
+Bothell,SINGLE_FAMILY,8,73.1
+"Mercer Island",TOWNHOUSE,2,26.0
+Redmond,TOWNHOUSE,9,32.7
+Sammamish,TOWNHOUSE,5,34.8
+Issaquah,TOWNHOUSE,5,36.4
+Seattle,TOWNHOUSE,17,40.9
+Kirkland,TOWNHOUSE,5,45.6
+Bellevue,TOWNHOUSE,12,46.4
+Renton,TOWNHOUSE,4,47.5
+Bothell,TOWNHOUSE,5,49.4
+"Mercer Island",CONDO,3,25.3
+Bothell,CONDO,8,31.5
+Issaquah,CONDO,6,36.7
+Bellevue,CONDO,8,38.5
+Sammamish,CONDO,2,40.0
+Seattle,CONDO,12,43.3
+Renton,CONDO,7,44.4
+Redmond,CONDO,8,48.3
+Kirkland,CONDO,4,74.3

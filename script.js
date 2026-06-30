@@ -13,19 +13,18 @@ const projects = [
     links: { demo: "project1.html" },
   },
   {
+    image: "Project 3/picture.png",
+    title: "Seattle Real Estate Analytics",
+    desc: "End-to-end SQL project — database design, Python data pipeline, and business-driven queries analyzing pricing, market speed, and buyer/seller behavior.",
+    tags: ["MySQL", "Database Design", "Python", "SQL Analytics"],
+    links: { page: "Project 3/index.html" },
+  },
+  {
     image: "images/loan-portfolio-dashboard.png",
     title: "Loan Portfolio Risk Dashboard",
     desc: "Interactive Streamlit app assessing loan portfolio credit risk — exploring default drivers and high-risk segments to support risk monitoring and decisions.",
     tags: ["Python", "Portfolio Monitoring", "Risk Analytics", "Live App"],
     links: { demo: "project2.html" },
-  },
-  {
-    emoji: "🏘️",
-    upcoming: true,
-    title: "Real Estate Analytics Platform",
-    desc: "Interactive analytics platform using SQL databases to support decision-making through personalized property recommendations, pricing analytics, and market intelligence.",
-    tags: ["SQL", "Database Design", "Predictive", "Recommendation"],
-    links: {},
   },
 ];
 
@@ -45,7 +44,7 @@ function renderProjects() {
         .map((t) => `<span class="card__tag">${t}</span>`)
         .join("");
 
-      const linkMap = { demo: "View Dashboard", report: "View Report (PDF)", github: "View on GitHub" };
+      const linkMap = { demo: "View", report: "View Report (PDF)", github: "View on GitHub", page: "View" };
       // The whole card links to its primary destination (demo > report > github).
       const [key, url] = Object.entries(p.links || {})[0] || [];
       const cta = p.upcoming ? "Coming soon" : key ? `${linkMap[key] || "View"} →` : "";

@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Seattle Real Estate Analytics · Yajie Liu</title>
+  <meta name="description" content="SQL portfolio project by Yajie Liu — database design, Python data pipeline, and business-driven SQL analysis of a Seattle real estate market dataset." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+
+  <!-- Syntax highlighting -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark-dimmed.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/sql.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+  <!-- Charts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <style>
+    /* ── Schema tables ── */
+    .schema-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 28px;
+    }
+    @media (max-width: 680px) { .schema-grid { grid-template-columns: 1fr; } }
+
+    .schema-table {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: var(--card);
+      box-shadow: var(--shadow);
+    }
+    .schema-table__head {
+      background: var(--accent);
+      color: #fff;
+      padding: 10px 16px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      font-family: "JetBrains Mono", monospace;
+      letter-spacing: 0.02em;
+    }
+    .schema-table table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+    .schema-table td {
+      padding: 7px 16px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    .schema-table tr:last-child td { border-bottom: none; }
+    .schema-table td:first-child {
+      font-family: "JetBrains Mono", monospace;
+      font-weight: 500;
+      color: var(--accent);
+      white-space: nowrap;
+    }
+    .schema-table td:nth-child(2) {
+      color: var(--text-muted);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.75rem;
+    }
+    .schema-table td:nth-child(3) {
+      color: var(--text-muted);
+      font-size: 0.75rem;
+    }
+    .col-pk { color: #d97706 !important; }
+    .col-fk { color: #059669 !important; }
+
+    /* ── Code block ── */
+    .code-block {
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .code-block__header {
+      background: #1a1f2e;
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .code-block__dots { display: flex; gap: 6px; }
+    .code-block__dots span {
+      width: 10px; height: 10px; border-radius: 50%;
+    }
+    .code-block__dots span:nth-child(1) { background: #ff5f57; }
+    .code-block__dots span:nth-child(2) { background: #ffbd2e; }
+    .code-block__dots span:nth-child(3) { background: #28ca41; }
+    .code-block__lang {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.4);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .code-block pre { margin: 0; border-radius: 0; }
+    .code-block pre code.hljs {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.8rem;
+      line-height: 1.65;
+    }
+
+    /* ── Chart cards ── */
+    .chart-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .chart-card__title {
+      padding: 14px 18px 4px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 0.02em;
+    }
+    .chart-card__body { padding: 8px 16px 16px; }
+
+    /* ── Query block layout ── */
+    .query-block {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 18px;
+      align-items: start;
+    }
+    @media (max-width: 760px) { .query-block { grid-template-columns: 1fr; } }
+
+    .query-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .query-label__num {
+      width: 28px; height: 28px;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .query-label h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .query-label p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* ── Insight pills ── */
+    .insight-list {
+      list-style: none;
+      margin-top: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .insight-list li {
+      font-size: 0.83rem;
+      color: var(--text-muted);
+      padding-left: 1.1rem;
+      position: relative;
+    }
+    .insight-list li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    /* ── Divider between queries ── */
+    .query-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 44px 0;
+    }
+
+    /* ── Step label ── */
+    .step-label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    /* ── Pipeline note ── */
+    .pipeline-note {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 16px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <header class="nav">
+    <div class="container nav__inner">
+      <a href="../index.html" class="nav__logo">YL</a>
+      <nav class="nav__links">
+        <a href="../index.html#projects">← Back to Projects</a>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark/light mode">🌙</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Project header -->
+  <section class="section" style="padding-bottom: 24px;">
+    <div class="container">
+      <p class="hero__eyebrow">MySQL · Python · SQL Analytics</p>
+      <h1 class="section__title">Seattle Real Estate Analytics</h1>
+      <p class="section__lead" style="max-width: 720px;">
+        An <strong>end-to-end SQL</strong> project built on a simulated Greater Seattle real estate dataset.
+        This project demonstrates <strong>relational database design</strong>, a <strong>Python-based data ingestion pipeline</strong>,
+        and <strong>business-driven SQL queries</strong> that surface pricing trends, market speed, and buyer/seller behavior
+        across 9 cities and 3 property types.
+      </p>
+      <div class="card__tags" style="margin-bottom: 0;">
+        <span class="card__tag">MySQL</span>
+        <span class="card__tag">Python</span>
+        <span class="card__tag">Database Design</span>
+        <span class="card__tag">Data Pipeline</span>
+        <span class="card__tag">SQL Analytics</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Step 1: Database Design ── -->
+  <section class="section section--alt" style="padding-top: 32px;">
+    <div class="container">
+      <p class="step-label">Step 1</p>
+      <h2 class="section__title">Database Design</h2>
+      <p class="section__lead" style="max-width: 680px;">
+        A normalized relational schema with 6 tables and foreign key constraints, modelling the full lifecycle
+        from user registration through property listing to final transaction.
+      </p>
+
+      <!-- EER Diagram -->
+      <h3 class="shot-label">Entity–Relationship Diagram</h3>
+      <a href="Design/Untitled Diagram-EER model .drawio.png" target="_blank" rel="noopener" class="shot" title="Open full size">
+        <img src="Design/Untitled Diagram-EER model .drawio.png" alt="Entity–Relationship Diagram" />
+      </a>
+      <p class="pdf-note">Click to view full size.</p>
+
+      <!-- Schema tables: sellers + houses only -->
+      <div class="schema-grid">
+
+        <div class="schema-table">
+          <div class="schema-table__head">sellers</div>
+          <table>
+            <tr><td class="col-pk">seller_id</td><td>INT</td><td>Primary Key</td></tr>
+            <tr><td class="col-fk">user_id</td><td>INT</td><td>FK → users</td></tr>
+            <tr><td>seller_type</td><td>VARCHAR(20)</td><td>INDIVIDUAL / INVESTOR</td></tr>
+            <tr><td>selling_motivation</td><td>VARCHAR(30)</td><td>RELOCATION, DOWNSIZING …</td></tr>
+            <tr><td>selling_priority</td><td>VARCHAR(30)</td><td>PRICE_MAXIMIZATION / BALANCED</td></tr>
+            <tr><td>negotiation_flexibility</td><td>VARCHAR(10)</td><td>LOW / MEDIUM / HIGH</td></tr>
+            <tr><td>target_sale_date</td><td>DATE</td><td></td></tr>
+          </table>
+        </div>
+
+        <div class="schema-table">
+          <div class="schema-table__head">houses</div>
+          <table>
+            <tr><td class="col-pk">house_id</td><td>INT</td><td>Primary Key</td></tr>
+            <tr><td class="col-fk">seller_id</td><td>INT</td><td>FK → sellers</td></tr>
+            <tr><td class="col-fk">agent_id</td><td>INT</td><td>FK → agents</td></tr>
+            <tr><td>city / neighborhood</td><td>VARCHAR</td><td>9 cities, Greater Seattle</td></tr>
+            <tr><td>property_type</td><td>VARCHAR(20)</td><td>SINGLE_FAMILY / TOWNHOUSE / CONDO</td></tr>
+            <tr><td>bedrooms / bathrooms</td><td>INT / DECIMAL</td><td></td></tr>
+            <tr><td>square_feet / lot_size</td><td>INT</td><td></td></tr>
+            <tr><td>listing_price</td><td>DECIMAL(12,2)</td><td></td></tr>
+            <tr><td>listing_date / status</td><td>DATE / VARCHAR</td><td>ACTIVE / PENDING / SOLD</td></tr>
+          </table>
+        </div>
+
+      </div>
+      <p style="margin-top:10px; font-size:0.75rem; color:var(--text-muted);">
+        <span style="color:#d97706;font-weight:700;">■</span> Primary Key &nbsp;&nbsp;
+        <span style="color:#059669;font-weight:700;">■</span> Foreign Key
+      </p>
+    </div>
+  </section>
+
+  <!-- ── Step 2: Data Pipeline ── -->
+  <section class="section" style="padding-top: 32px;">
+    <div class="container">
+      <p class="step-label">Step 2</p>
+      <h2 class="section__title">Data Pipeline</h2>
+      <p class="section__lead" style="max-width: 680px;">
+        A Python script reads 6 CSV files and bulk-inserts all rows into MySQL.
+        Tables are loaded in foreign key dependency order to avoid constraint violations.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block__header">
+          <div class="code-block__dots"><span></span><span></span><span></span></div>
+          <div class="code-block__lang">Python &nbsp;·&nbsp; insert_data.py (core loop)</div>
+        </div>
+        <pre><code class="language-python"># Load in FK order: users → agents → sellers → buyers → houses → transactions
+CSV_TABLES = ["users", "agents", "sellers", "buyers", "houses", "transactions"]
+
+for table in CSV_TABLES:
+    df = pd.read_csv(os.path.join(DATA_PATH, f"{table}.csv"))
+    df = df.where(pd.notnull(df), None)       # convert NaN → SQL NULL
+
+    cols         = ", ".join(df.columns)
+    placeholders = ", ".join(["%s"] * len(df.columns))
+    sql          = f"INSERT INTO {table} ({cols}) VALUES ({placeholders})"
+
+    cursor.executemany(sql, [tuple(row) for row in df.values])
+    conn.commit()
+    print(f"✅  {len(df):,} rows inserted → {table}")
+</code></pre>
+      </div>
+
+      <div class="pipeline-note">
+        <strong>Key design choices:</strong> &nbsp;Parameterized <code>%s</code> placeholders prevent SQL injection · Column names are read directly from CSV headers (no hardcoding) · <code>pd.notnull()</code> converts Pandas NaN to Python <code>None</code>, which MySQL stores as <code>NULL</code> · <code>executemany()</code> inserts all rows in a single round-trip per table.
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Step 3: Business Analysis ── -->
+  <section class="section section--alt" style="padding-top: 32px; padding-bottom: 56px;">
+    <div class="container">
+      <p class="step-label">Step 3</p>
+      <h2 class="section__title">Business Analysis</h2>
+      <p class="section__lead" style="max-width: 680px;">
+        SQL queries written to answer real business questions — using <code>GROUP BY</code>, <code>JOIN</code>,
+        aggregate functions, and subqueries to surface market intelligence.
+      </p>
+
+      <!-- Q4: Seller Motivation -->
+      <div class="query-label">
+        <div class="query-label__num">Q1</div>
+        <div>
+          <h3>Seller Motivation Breakdown</h3>
+          <p>Why are sellers entering the market? Understanding motivation informs pricing strategy and negotiation approach.</p>
+        </div>
+      </div>
+
+      <div class="query-block">
+        <div>
+          <div class="code-block">
+            <div class="code-block__header">
+              <div class="code-block__dots"><span></span><span></span><span></span></div>
+              <div class="code-block__lang">SQL</div>
+            </div>
+            <pre><code class="language-sql">SELECT
+    selling_motivation,
+    COUNT(*) AS total_sellers,
+    ROUND(
+      COUNT(*) * 100.0
+      / (SELECT COUNT(*) FROM sellers),
+      1
+    ) AS percentage
+FROM sellers
+GROUP BY selling_motivation
+ORDER BY total_sellers DESC;
+</code></pre>
+          </div>
+          <ul class="insight-list">
+            <li>Relocation is the #1 driver (36%) — job moves fuel supply</li>
+            <li>Downsizing + estate sales = 37% — aging homeowner cohort</li>
+            <li>Investment exits at 8.7% suggest some cooling of investor activity</li>
+          </ul>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-card__title">Seller Motivation Distribution</div>
+          <div class="chart-card__body" style="max-width: 320px; margin: 0 auto;">
+            <canvas id="chartQ4"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="query-divider"></div>
+
+      <!-- Q2: List vs Sale Price -->
+      <div class="query-label">
+        <div class="query-label__num">Q2</div>
+        <div>
+          <h3>Listing vs. Sale Price by City &amp; Property Type</h3>
+          <p>How close are final sale prices to listing prices? A ratio above 100% means buyers bid over asking.</p>
+        </div>
+      </div>
+
+      <div class="query-block">
+        <div>
+          <div class="code-block">
+            <div class="code-block__header">
+              <div class="code-block__dots"><span></span><span></span><span></span></div>
+              <div class="code-block__lang">SQL</div>
+            </div>
+            <pre><code class="language-sql">SELECT
+    h.city,
+    h.property_type,
+    COUNT(*)                   AS total_sold,
+    FORMAT(AVG(h.listing_price), 0)
+                               AS avg_list_price,
+    FORMAT(AVG(t.sale_price), 0)
+                               AS avg_sale_price,
+    ROUND(
+      AVG(t.sale_price / h.listing_price * 100),
+      1
+    )                          AS sale_to_list_ratio
+FROM transactions t
+JOIN houses h ON t.house_id = h.house_id
+GROUP BY h.city, h.property_type
+ORDER BY sale_to_list_ratio DESC;
+</code></pre>
+          </div>
+          <ul class="insight-list">
+            <li>Condos in Bellevue fetch 102.4% of asking — highest competition</li>
+            <li>Issaquah single-family homes sell at 102.1% — strong demand suburb</li>
+            <li>Sammamish townhouses at 98.1% are the only segment below list price</li>
+          </ul>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-card__title">Sale-to-List Ratio by Property Type &amp; City (%)</div>
+          <div class="chart-card__body">
+            <canvas id="chartQ2"></canvas>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>© <span id="year"></span> Yajie Liu, CPA · Built with HTML/CSS/JS · Hosted on GitHub Pages</p>
+    </div>
+  </footer>
+
+  <script src="../script.js"></script>
+  <script>
+    hljs.highlightAll();
+
+    Chart.defaults.font.family = "'Inter', -apple-system, sans-serif";
+    Chart.defaults.font.size   = 11;
+
+    // Read accent color from CSS variable (supports dark mode)
+    const accent = getComputedStyle(document.documentElement)
+                     .getPropertyValue('--accent').trim() || '#4f46e5';
+
+    const tooltipDefaults = {
+      backgroundColor: '#1a1a2e',
+      padding: 10,
+      cornerRadius: 8,
+      titleColor: '#fff',
+      bodyColor: 'rgba(255,255,255,0.8)',
+    };
+
+    // ── Q4: Seller Motivation (doughnut) ──
+    new Chart(document.getElementById('chartQ4'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Relocation', 'Downsizing', 'Upsizing', 'Estate Sale', 'Investment Exit'],
+        datasets: [{
+          data: [54, 35, 27, 21, 13],
+          backgroundColor: [
+            '#4facdf', '#1e4b8a', '#e07a30', '#27ae60', '#94a3b8'
+          ],
+          borderWidth: 0.5,
+          borderColor: 'var(--card)',
+          hoverOffset: 8,
+        }]
+      },
+      options: {
+        cutout: '62%',
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { boxWidth: 11, padding: 10, font: { size: 10 } }
+          },
+          tooltip: {
+            ...tooltipDefaults,
+            callbacks: {
+              label: ctx => ` ${ctx.label}: ${ctx.raw} (${((ctx.raw/150)*100).toFixed(1)}%)`
+            }
+          }
+        }
+      }
+    });
+
+    // ── Q2: Sale-to-List Ratio (grouped bar) ──
+    const cities = ['Bellevue','Bothell','Issaquah','Kirkland','Mercer Is.','Redmond','Renton','Sammamish','Seattle'];
+    new Chart(document.getElementById('chartQ2'), {
+      type: 'bar',
+      data: {
+        labels: cities,
+        datasets: [
+          {
+            label: 'Single Family',
+            data: [100.4, 101.1, 102.1, 101.1, 100.8, 100.4, 101.0, 99.5, 101.0],
+            backgroundColor: '#4facdf',
+            borderRadius: 4,
+          },
+          {
+            label: 'Townhouse',
+            data: [99.1, 100.5, 100.2, 102.0, 99.7, 99.3, 102.5, 98.1, 101.1],
+            backgroundColor: '#1e4b8a',
+            borderRadius: 4,
+          },
+          {
+            label: 'Condo',
+            data: [102.4, 99.3, 101.9, 100.5, 99.5, 99.9, 101.9, 101.8, 100.7],
+            backgroundColor: '#e07a30',
+            borderRadius: 4,
+          },
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { boxWidth: 11, padding: 12, font: { size: 10 } }
+          },
+          tooltip: {
+            ...tooltipDefaults,
+            callbacks: {
+              label: ctx => ` ${ctx.dataset.label}: ${ctx.raw}%`
+            }
+          }
+        },
+        scales: {
+          y: {
+            min: 97,
+            max: 104,
+            grid: { color: 'rgba(0,0,0,0.05)' },
+            ticks: { callback: v => v + '%' }
+          },
+          x: { grid: { display: false } }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
