@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Customer Segmentation for E-Commerce · Yajie Liu</title>
+  <meta name="description" content="End-to-end machine learning project by Yajie Liu — data cleaning, RFM feature engineering, K-Means customer segmentation, and Logistic Regression / Decision Tree / KNN classification models on the Online Retail II dataset (1M+ transactions)." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+
+  <!-- Syntax highlighting -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark-dimmed.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+
+  <style>
+    /* ── Data / schema tables ── */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.83rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      margin-top: 10px;
+    }
+    .data-table th {
+      background: var(--accent);
+      color: #fff;
+      text-align: left;
+      padding: 9px 14px;
+      font-weight: 600;
+      font-size: 0.78rem;
+      letter-spacing: 0.02em;
+    }
+    .data-table td {
+      padding: 8px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-muted);
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table td:first-child { color: var(--text); font-weight: 600; white-space: nowrap; }
+    .table-wrap { overflow-x: auto; }
+
+    /* table styled to sit inside a .fig card (no own border/shadow) */
+    .fig .data-table {
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
+      margin-top: 0;
+    }
+    .fig--table { display: flex; flex-direction: column; }
+    .fig--table .table-wrap { flex: 1; display: flex; }
+    .fig--table .data-table { align-self: stretch; height: 100%; font-size: 0.8rem; }
+    .fig--table .data-table th,
+    .fig--table .data-table td { padding: 8px 11px; white-space: nowrap; }
+
+    /* ── Code block ── */
+    .code-block {
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      margin-top: 16px;
+    }
+    .code-block__header {
+      background: #1a1f2e;
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .code-block__dots { display: flex; gap: 6px; }
+    .code-block__dots span { width: 10px; height: 10px; border-radius: 50%; }
+    .code-block__dots span:nth-child(1) { background: #ff5f57; }
+    .code-block__dots span:nth-child(2) { background: #ffbd2e; }
+    .code-block__dots span:nth-child(3) { background: #28ca41; }
+    .code-block__lang {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.4);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .code-block pre { margin: 0; border-radius: 0; }
+    .code-block pre code.hljs {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.78rem;
+      line-height: 1.65;
+    }
+
+    /* ── Figures ── */
+    .fig-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 20px;
+    }
+    @media (max-width: 680px) { .fig-grid { grid-template-columns: 1fr; } }
+
+    .fig {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+    .fig img { display: block; width: 100%; height: auto; }
+    .fig figcaption {
+      padding: 9px 14px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      background: var(--card);
+      border-top: 1px solid var(--border);
+    }
+    .fig figcaption b { color: var(--text); font-weight: 600; }
+    .fig--wide { margin-top: 20px; }
+
+    /* ── HTML figure title (sits above an image, like a chart title) ── */
+    .fig__title {
+      text-align: center;
+      font-weight: 700;
+      font-size: 0.92rem;
+      color: #1a1a2e;
+      padding: 15px 16px 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .fig--titled > img { padding: 4px 16px 12px; }
+
+    /* ── Matched figure pair (equal size, titles on one line) ── */
+    .fig-pair { align-items: start; }
+
+    /* ── Recommendation blocks ── */
+    .rec { margin-top: 24px; }
+    .rec + .rec { border-top: 1px solid var(--border); padding-top: 18px; }
+    .rec h3 { font-size: 1rem; font-weight: 600; color: var(--text); margin-bottom: 1px; }
+    .rec__meta { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px; }
+    .rec .insight-list { margin-top: 8px; }
+
+    /* ── Step label + heading ── */
+    .step-label {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .step-heading {
+      font-size: clamp(1.15rem, 2.3vw, 1.4rem);
+      font-weight: 600;
+      letter-spacing: -0.2px;
+      margin-bottom: 10px;
+    }
+
+    /* ── Insight pills ── */
+    .insight-list {
+      list-style: none;
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .insight-list li {
+      font-size: 0.86rem;
+      color: var(--text-muted);
+      padding-left: 1.1rem;
+      position: relative;
+    }
+    .insight-list li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    /* ── Divider ── */
+    .query-divider { height: 1px; background: var(--border); margin: 40px 0; }
+
+    /* ── Note ── */
+    .note {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      margin-top: 18px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <header class="nav">
+    <div class="container nav__inner">
+      <a href="../index-BA.html" class="nav__logo">YL</a>
+      <nav class="nav__links">
+        <a href="../index-BA.html#projects">← Back to Projects</a>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark/light mode">🌙</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Project header -->
+  <section class="section" style="padding-bottom: 24px;">
+    <div class="container">
+      <p class="hero__eyebrow">Python · Machine Learning · Customer Analytics</p>
+      <h1 class="section__title">Customer Segmentation for E-Commerce</h1>
+      <p class="section__lead" style="max-width: 720px;">
+        An <strong>end-to-end Machine Learning</strong> workflow on 1M+ online retail transaction, covering
+        <strong>exploratory data analysis</strong>, <strong>unsupervised model training</strong> (clustering),
+        <strong>supervised model training and evaluation</strong> (classification), and business-facing
+        recommendations.
+      </p>
+      <p class="section__lead" style="max-width: 720px;">
+        Stage one performs <strong>exploratory data analysis</strong> to clean and transform the raw
+        transaction data, handling missing values, duplicates, and outliers to prepare it for feature
+        engineering. Stage two <strong>normalizes customer purchase behavior</strong> into three engineered
+        features — Recency, Frequency, and Monetary (RFM) — and trains a <strong>K-Means clustering model</strong>
+        to segment 5,852 customers into four behaviorally distinct groups. Stage three trains and evaluates
+        three supervised classification models — <strong>Logistic Regression</strong>,
+        <strong>Decision Tree</strong>, and <strong>KNN</strong> — to predict customer segment membership from
+        RFM features, enabling new customers to be scored without re-running the clustering model.
+      </p>
+      <div class="card__tags" style="margin-bottom: 8px;">
+        <span class="card__tag">Python</span>
+        <span class="card__tag">Machine Learning</span>
+        <span class="card__tag">K-Means Clustering</span>
+        <span class="card__tag">Classification Models</span>
+        <span class="card__tag">Customer Behavior Analysis</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Step 1: EDA ── -->
+  <section class="section section--alt" style="padding-top: 32px;">
+    <div class="container">
+      <p class="step-label">Step 1 · EDA</p>
+      <h2 class="section__title step-heading">Exploratory Data Analysis</h2>
+      <p class="section__lead" style="max-width: 680px;">
+        Two annual worksheets were combined into one 1.07M-row transaction log, then run through a sequential
+        cleaning pipeline — each step's effect on the row count logged for transparency — before exploring
+        revenue patterns over time, by geography, and by order size.
+      </p>
+
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr><th>Cleaning step</th><th>Rows removed</th><th>Rows remaining</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Raw combined dataset (2009–2011)</td><td>—</td><td>1,067,371</td></tr>
+            <tr><td>Cancelled orders (Invoice starts with "C")</td><td>19,494</td><td>1,047,877</td></tr>
+            <tr><td>Missing Customer ID</td><td>242,257</td><td>805,620</td></tr>
+            <tr><td>Non-positive Price</td><td>71</td><td>805,549</td></tr>
+            <tr><td>Duplicate rows</td><td>26,124</td><td>779,425</td></tr>
+            <tr><td>Non-product stock codes (postage, fees…)</td><td>2,848</td><td>776,577</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:10px; font-size:0.78rem; color:var(--text-muted);">
+        Final working set: <strong>776,577</strong> transaction lines · <strong>5,852</strong> unique customers (~73% of raw rows).
+      </p>
+
+      <figure class="fig fig--wide">
+        <img src="figures/figure1.png" alt="Total monthly revenue, December 2009 to December 2011" loading="lazy" />
+        <figcaption><b>Figure 1.</b> Monthly revenue — pre-holiday peaks in 2010 and 2011.</figcaption>
+      </figure>
+
+      <div class="fig-grid">
+        <figure class="fig">
+          <img src="figures/figure2.png" alt="Top 10 countries by total revenue" loading="lazy" />
+          <figcaption><b>Figure 2.</b> The UK generates ~84% of total revenue.</figcaption>
+        </figure>
+        <figure class="fig">
+          <img src="figures/figure3.png" alt="Distribution of invoice value, capped at the 99th percentile" loading="lazy" />
+          <figcaption><b>Figure 3.</b> Invoice value is heavily right-skewed.</figcaption>
+        </figure>
+      </div>
+
+      <p class="note">
+        Because invoice value is strongly right-skewed — the customer base mixes individual consumers and
+        wholesalers — all three RFM features were
+        <strong>log(1&nbsp;+&nbsp;x)</strong> transformed and standardized before modeling — otherwise
+        pound-scale spending would dominate the Euclidean distance used by K-Means and KNN.
+      </p>
+    </div>
+  </section>
+
+  <!-- ── Step 2: Machine Learning ── -->
+  <section class="section" style="padding-top: 32px;">
+    <div class="container">
+      <p class="step-label">Step 2 · Machine Learning</p>
+      <h2 class="section__title step-heading">Customer Segmentation (RFM + K-Means)</h2>
+      <p class="section__lead" style="max-width: 680px;">
+        Each customer was reduced to three behavioral features, aggregated from the cleaned transaction log
+        against a snapshot date one day after the final transaction.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block__header">
+          <div class="code-block__dots"><span></span><span></span><span></span></div>
+          <div class="code-block__lang">Python &nbsp;·&nbsp; RFM feature engineering</div>
+        </div>
+        <pre><code class="language-python">snapshot_date = df["InvoiceDate"].max() + pd.Timedelta(days=1)
+df["LineValue"] = df["Quantity"] * df["Price"]
+
+rfm = df.groupby("Customer ID").agg(
+    Recency   = ("InvoiceDate", lambda x: (snapshot_date - x.max()).days),
+    Frequency = ("Invoice",     "nunique"),      # distinct orders
+    Monetary  = ("LineValue",   "sum"),          # total spend (£)
+)
+
+# Right-skewed -> log1p, then standardize (K-Means & KNN rely on distance)
+rfm_scaled = StandardScaler().fit_transform(np.log1p(rfm))
+</code></pre>
+      </div>
+
+      <p class="section__lead" style="max-width: 680px; margin-top: 28px;">
+        The number of clusters was chosen using the elbow method and silhouette analysis together. The elbow
+        curve had no sharp bend; <code>k = 4</code> was a local silhouette maximum and matched the four
+        business-relevant segments defined in the proposal.
+      </p>
+
+      <div class="fig-grid" style="align-items: start;">
+        <figure class="fig">
+          <img src="figures/figure4.png" alt="Elbow method for selecting the number of K-Means clusters" loading="lazy" />
+          <figcaption><b>Figure 4.</b> Elbow method — no clear bend.</figcaption>
+        </figure>
+        <figure class="fig">
+          <img src="figures/figure5.png" alt="Silhouette scores across candidate values of k" loading="lazy" />
+          <figcaption><b>Figure 5.</b> Silhouette score — local maximum at k = 4.</figcaption>
+        </figure>
+      </div>
+
+      <div class="table-wrap" style="margin-top: 24px;">
+        <table class="data-table">
+          <thead>
+            <tr><th>Segment</th><th>Avg. Recency (days)</th><th>Avg. Frequency (orders)</th><th>Avg. Monetary (£)</th><th>Customers</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>High-Value</td><td>27.6</td><td>19.2</td><td>10,590</td><td>1,182</td></tr>
+            <tr><td>Loyal</td><td>227.4</td><td>5.1</td><td>1,978</td><td>1,455</td></tr>
+            <tr><td>Occasional</td><td>28.2</td><td>3.0</td><td>841</td><td>1,246</td></tr>
+            <tr><td>At-Risk</td><td>392.6</td><td>1.4</td><td>317</td><td>1,969</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="fig-grid fig-pair">
+        <figure class="fig fig--titled">
+          <div class="fig__title">Customer Segments in 2D PCA Space</div>
+          <img src="figures/figure6.png" alt="Customer segments visualized via 2D PCA projection" loading="lazy" />
+          <figcaption><b>Figure 6.</b> Segments in 2D PCA space (95.1% of variance retained).</figcaption>
+        </figure>
+        <figure class="fig fig--titled">
+          <div class="fig__title">Customers per Segment</div>
+          <img src="figures/figure7.png" alt="Customers per segment doughnut chart" loading="lazy" />
+          <figcaption><b>Figure 7.</b> Customers per segment — At-Risk is the largest.</figcaption>
+        </figure>
+      </div>
+
+      <ul class="insight-list">
+        <li><strong>Loyal</strong> customers have far higher recency (227 days) than <strong>Occasional</strong> ones (28 days) — recency alone would wrongly flag genuine repeat buyers as churned.</li>
+        <li>The <strong>At-Risk</strong> segment is the largest by count (33.6% of customers) but contributes the least revenue per customer.</li>
+        <li>All three RFM dimensions are needed jointly to separate the segments; no single feature is sufficient.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ── Step 3: Model Training & Test ── -->
+  <section class="section section--alt" style="padding-top: 32px;">
+    <div class="container">
+      <p class="step-label">Step 3 · Model Training &amp; Test</p>
+      <h2 class="section__title step-heading">Segment Classification</h2>
+      <p class="section__lead" style="max-width: 680px;">
+        The cluster labels became a classification target. Three algorithms from distinct modeling families
+        were trained on a stratified 75/25 split — scaler fit on the training set only — then evaluated on a
+        held-out test set and with 5-fold cross-validation.
+      </p>
+
+      <div class="code-block">
+        <div class="code-block__header">
+          <div class="code-block__dots"><span></span><span></span><span></span></div>
+          <div class="code-block__lang">Python &nbsp;·&nbsp; model training &amp; evaluation</div>
+        </div>
+        <pre><code class="language-python">X = rfm_scaled            # same 3 standardized RFM features
+y = kmeans.labels_        # segment assigned by K-Means (k=4)
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.25, stratify=y, random_state=42
+)
+
+models = {
+    "Logistic Regression": LogisticRegression(max_iter=1000),
+    "Decision Tree":        DecisionTreeClassifier(random_state=42),
+    "K-Nearest Neighbors":  KNeighborsClassifier(),
+}
+for name, clf in models.items():
+    clf.fit(X_train, y_train)
+    acc = accuracy_score(y_test, clf.predict(X_test))
+    cv  = cross_val_score(clf, X_train, y_train, cv=5).mean()   # 5-fold
+    print(f"{name:22s}  test={acc:.3f}  cv={cv:.3f}")
+</code></pre>
+      </div>
+
+      <div class="fig-grid" style="grid-template-columns: 1fr 1fr; margin-top: 24px; align-items: stretch;">
+        <figure class="fig fig--titled fig--table">
+          <div class="fig__title">Classifier Performance</div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr><th>Model</th><th>Accuracy</th><th>F1</th><th>CV Acc.</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Logistic Regression</td><td>0.991</td><td>0.990</td><td>0.990 ± 0.003</td></tr>
+                <tr><td>Decision Tree</td><td>0.972</td><td>0.971</td><td>0.972 ± 0.005</td></tr>
+                <tr><td>K-Nearest Neighbors</td><td>0.986</td><td>0.985</td><td>0.980 ± 0.005</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <figcaption><b>Table 1.</b> Test-set and 5-fold cross-validation scores by model.</figcaption>
+        </figure>
+        <figure class="fig fig--titled">
+          <div class="fig__title">Test Accuracy by Model</div>
+          <img src="figures/figure8.png" alt="Test accuracy by model bar chart" loading="lazy" />
+          <figcaption><b>Figure 8.</b> Test accuracy — Logistic Regression leads at 99.1%.</figcaption>
+        </figure>
+      </div>
+
+      <figure class="fig fig--wide">
+        <img src="figures/figure9.png" alt="Confusion matrices for Logistic Regression, Decision Tree, and KNN" loading="lazy" />
+        <figcaption><b>Figure 9.</b> Confusion matrices — errors are rare, mostly Loyal &harr; Occasional.</figcaption>
+      </figure>
+
+      <p class="note">
+        <strong>Interpreted with caution:</strong> because the target labels were derived from the same RFM
+        features fed to the classifiers, near-perfect accuracy is expected by construction — it shows the
+        models faithfully recovered the K-Means boundaries, not that they found new signal. The practical
+        value is a fast, interpretable way to assign new customers to a segment between full re-clustering
+        cycles (e.g. quarterly).
+      </p>
+    </div>
+  </section>
+
+  <!-- ── Outcome ── -->
+  <section class="section" style="padding-top: 32px; padding-bottom: 56px;">
+    <div class="container">
+      <p class="step-label">Outcome</p>
+      <h2 class="section__title step-heading">Actionable Recommendations by Segment</h2>
+      <p class="section__lead" style="max-width: 680px;">
+        Each segment needs a different promotion and advertising strategy. The guiding principle is to spend
+        retention budget where revenue is concentrated and switch to low-cost automation where it is not.
+      </p>
+
+      <div class="rec">
+        <h3>High-Value</h3>
+        <p class="rec__meta">1,182 customers (20%) · ~£10,590 avg spend · orders every ~4 weeks</p>
+        <ul class="insight-list">
+          <li><strong>Advertising:</strong> stop showing them broad discount ads; retarget with new-arrival and premium-range creative so promotion spend does not erode a margin they already pay in full.</li>
+          <li><strong>Promotion:</strong> invite-only early access, free expedited shipping, and a points-per-order loyalty tier; assign a named account contact to the top decile.</li>
+          <li><strong>Profitability lever:</strong> a 1–2 point cut in churn here outweighs large gains in any other segment — fund this retention first.</li>
+        </ul>
+      </div>
+
+      <div class="rec">
+        <h3>Loyal</h3>
+        <p class="rec__meta">1,455 customers (25%) · ~£1,978 avg spend · ~5 orders/yr, 227-day average gap</p>
+        <ul class="insight-list">
+          <li><strong>Advertising:</strong> email / SMS reorder reminders timed to each customer's own repurchase cycle; category cross-sell driven by past baskets.</li>
+          <li><strong>Promotion:</strong> buy-more-save-more bundles that lift basket size without deep unit discounts; referral credit to turn them into an acquisition channel.</li>
+          <li><strong>Profitability lever:</strong> shorten the reorder gap — moving the segment from ~5 to ~6 orders/yr is incremental margin on an already-engaged base.</li>
+        </ul>
+      </div>
+
+      <div class="rec">
+        <h3>Occasional</h3>
+        <p class="rec__meta">1,246 customers (21%) · ~£841 avg spend · purchased recently, ~3 orders total</p>
+        <ul class="insight-list">
+          <li><strong>Advertising:</strong> a post-first-purchase nurture email series; retarget with best-seller and social-proof creative to build trust.</li>
+          <li><strong>Promotion:</strong> a time-boxed second-purchase incentive (threshold-based free shipping) to trigger the repeat order; run seasonal campaigns in Sept–Nov ahead of the holiday peak (Figure 1).</li>
+          <li><strong>Profitability lever:</strong> the target is Occasional → Loyal conversion; concentrate spend on the 2nd and 3rd order, where repeat behaviour locks in.</li>
+        </ul>
+      </div>
+
+      <div class="rec">
+        <h3>At-Risk</h3>
+        <p class="rec__meta">1,969 customers (34%) · ~£317 avg spend · ~1 order, 393-day recency</p>
+        <ul class="insight-list">
+          <li><strong>Advertising:</strong> automated, owned channels only — triggered email and existing-audience retargeting; no paid prospecting-level budget per head.</li>
+          <li><strong>Promotion:</strong> one win-back offer with a hard expiry; after 2–3 unanswered touches, drop to a low-frequency newsletter and stop active spend.</li>
+          <li><strong>Profitability lever:</strong> the gain is cost avoidance — budget reallocated from unresponsive At-Risk customers to High-Value and Loyal retention raises blended ROAS.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>© <span id="year"></span> Yajie Liu, CPA · Built with HTML/CSS/JS · Hosted on GitHub Pages</p>
+    </div>
+  </footer>
+
+  <script src="../script.js"></script>
+  <script>hljs.highlightAll();</script>
+</body>
+</html>
