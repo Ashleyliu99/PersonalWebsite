@@ -3,430 +3,128 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Yajie Liu, CPA — Showcase of AI-enabled Projects</title>
+  <title>Yajie Liu, CPA  Portfolio</title>
+  <meta name="description" content="Yajie Liu, CPA — Financial Analyst, Data Analyst, and Risk & Business Intelligence Professional. Transforming financial and operational data into actionable business insights." />
+
+  <!-- Social share preview -->
+  <meta property="og:title" content="Yajie Liu, CPA · Portfolio" />
+  <meta property="og:description" content="Transforming financial and operational data into actionable business insights." />
+  <meta property="og:type" content="website" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <style>
-    /* ===== Base ===== */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: "Inter", -apple-system, sans-serif;
-      color: #1a1a2e;
-      background: #fff;
-      line-height: 1.6;
-      -webkit-print-color-adjust: exact;
-      print-color-adjust: exact;
-    }
-
-    a { color: #4f46e5; text-decoration: none; }
-
-    .portfolio-link {
-      color: #4f46e5;
-      font-weight: 600;
-      background: #ede9fe;
-      padding: 2px 8px;
-      border-radius: 5px;
-      text-decoration: underline;
-      text-underline-offset: 2px;
-    }
-
-    /* ===== Page wrapper ===== */
-    .page {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 48px 48px;
-    }
-
-    /* ===== Header / Cover ===== */
-    .cover {
-      border-bottom: 3px solid #4f46e5;
-      padding-bottom: 28px;
-      margin-bottom: 36px;
-    }
-
-    .cover__eyebrow {
-      font-size: 1.1rem;
-      font-weight: 600;
-      letter-spacing: 0.2px;
-      color: #4f46e5;
-      margin-bottom: 10px;
-    }
-
-    .cover__name {
-      font-size: 2.4rem;
-      font-weight: 700;
-      letter-spacing: -1px;
-      margin-bottom: 6px;
-    }
-
-    .cover__tagline {
-      font-size: 1rem;
-      color: #5b6172;
-      margin-bottom: 16px;
-    }
-
-    .cover__contacts {
-      display: flex;
-      gap: 24px;
-      flex-wrap: wrap;
-      font-size: 0.88rem;
-      color: #5b6172;
-    }
-
-    .cover__contacts span { display: flex; align-items: center; gap: 6px; }
-
-    /* ===== Section headings ===== */
-    .section-title {
-      font-size: 1.15rem;
-      font-weight: 700;
-      letter-spacing: -0.3px;
-      color: #4f46e5;
-      text-transform: uppercase;
-      font-size: 0.78rem;
-      letter-spacing: 1.2px;
-      border-bottom: 1px solid #e6e8ee;
-      padding-bottom: 6px;
-      margin-bottom: 16px;
-      margin-top: 32px;
-    }
-
-    /* ===== About + Skills ===== */
-    .about-grid {
-      display: grid;
-      grid-template-columns: 1.5fr 1fr;
-      gap: 32px;
-    }
-
-    .about-text p {
-      font-size: 0.92rem;
-      color: #3a3a50;
-      margin-bottom: 10px;
-    }
-
-    .skills-label {
-      font-size: 0.78rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: #4f46e5;
-      margin-bottom: 10px;
-    }
-
-    .skills {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      list-style: none;
-    }
-
-    .skills li {
-      background: #f0f0ff;
-      color: #3730a3;
-      border: 1px solid #c7d2fe;
-      padding: 3px 10px;
-      border-radius: 999px;
-      font-size: 0.78rem;
-      font-weight: 500;
-    }
-
-    /* ===== Projects ===== */
-    .project {
-      margin-bottom: 44px;
-      padding-top: 26px;
-      border-top: 3px solid #4f46e5;
-    }
-
-    .project:first-of-type {
-      border-top: none;
-      padding-top: 0;
-    }
-
-    .project-num {
-      display: inline-block;
-      font-size: 0.74rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      color: #4f46e5;
-      background: #ede9fe;
-      padding: 2px 10px;
-      border-radius: 999px;
-      margin-bottom: 8px;
-    }
-
-    .project__header {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      margin-bottom: 6px;
-    }
-
-    .project__title {
-      font-size: 1.12rem;
-      font-weight: 700;
-      color: #1a1a2e;
-    }
-
-    .project__tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 5px;
-      margin-bottom: 10px;
-    }
-
-    .project__tag {
-      background: #f7f8fa;
-      border: 1px solid #e6e8ee;
-      color: #5b6172;
-      padding: 2px 9px;
-      border-radius: 5px;
-      font-size: 0.74rem;
-      font-weight: 500;
-    }
-
-    .project__desc {
-      font-size: 0.9rem;
-      color: #3a3a50;
-      margin-bottom: 14px;
-      max-width: 720px;
-    }
-
-    .project__desc p { margin-bottom: 8px; }
-
-    .project__img {
-      width: 100%;
-      border: 1px solid #e6e8ee;
-      border-radius: 10px;
-      display: block;
-      margin-bottom: 10px;
-      box-shadow: 0 2px 12px rgba(20,20,50,0.08);
-    }
-
-    .project__img-label {
-      font-size: 0.78rem;
-      font-weight: 600;
-      color: #5b6172;
-      margin-bottom: 6px;
-      margin-top: 14px;
-    }
-
-    .img-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
-
-    /* ===== Print button (hidden in print) ===== */
-    .print-btn {
-      position: fixed;
-      bottom: 28px;
-      right: 28px;
-      background: #4f46e5;
-      color: #fff;
-      border: none;
-      padding: 12px 22px;
-      border-radius: 10px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: 0 4px 14px rgba(79,70,229,0.35);
-      font-family: inherit;
-    }
-
-    .print-btn:hover { background: #4338ca; }
-
-    /* ===== Footer ===== */
-    .footer {
-      margin-top: 40px;
-      padding-top: 16px;
-      border-top: 1px solid #e6e8ee;
-      font-size: 0.8rem;
-      color: #9aa3b8;
-      text-align: center;
-    }
-
-    /* ===== Print styles ===== */
-    @media print {
-      @page { margin: 1.5cm 1.8cm; size: A4 portrait; }
-
-      body { font-size: 10.5pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-
-      .page { padding: 0; max-width: 100%; }
-
-      /* Never orphan a heading at the bottom of a page */
-      .section-title,
-      .project-num,
-      .project__title,
-      .project__header,
-      .project__tags,
-      .project__img-label { page-break-after: avoid; break-after: avoid; }
-
-      /* Keep each label + image together — never split across pages.
-         Project 2's walkthrough is now four separate, page-sized crops,
-         each comfortably fits under one page on its own, so this works
-         reliably without any special-case exceptions. */
-      .img-block { page-break-inside: avoid; break-inside: avoid; }
-
-      /* Project 1's two report-page images are allowed to split across
-         pages (each .img-block still stays intact on its own) so the
-         Page 1 dashboard view lands on print page 1 right after the
-         intro text, instead of both images being pushed together to
-         page 2 whenever they don't both fit on page 1. */
-
-      /* Keep project intro (title + tags + desc) together */
-      .project__desc { page-break-after: avoid; break-after: avoid; }
-
-      /* Keep each project's badge + title + tags + description as one
-         indivisible unit so the text never splits mid-paragraph — but only
-         for projects that already start on their own fresh page (2, 3, ...).
-         Project 1 is intentionally left out so its text can flow and fill
-         the remaining space on page 1 instead of jumping to page 2. */
-      .page-break .project__intro { page-break-inside: avoid; break-inside: avoid; }
-
-      /* Project 1's text flows right after About, filling page 1 up to its
-         limit, instead of always being pushed to a fresh page */
-
-      /* Each subsequent project (2, 3, ...) still always starts on a new page */
-      .page-break { page-break-before: always; break-before: always; }
-
-      /* Remove screen shadows for cleaner print */
-      .project__img { box-shadow: none; }
-
-      /* Prevent awkward single-line widows/orphans in paragraphs */
-      p { orphans: 3; widows: 3; }
-
-      /* Keep about grid on one page if possible */
-      .about-grid { page-break-inside: avoid; break-inside: avoid; }
-
-      /* Keep link highlight and color in PDF */
-      .portfolio-link {
-        color: #4f46e5 !important;
-        background: #ede9fe !important;
-        text-decoration: underline !important;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-
-<div class="page">
-
-  <!-- Cover -->
-  <header class="cover">
-    <p class="cover__eyebrow">Showcase of AI-enabled Projects</p>
-    <h1 class="cover__name">Yajie Liu, CPA</h1>
-    <a href="https://ashleyliu99.github.io/PersonalWebsite/index-new.html" class="portfolio-link" style="display:inline-block; margin-bottom: 14px;">🌐 Click to View Portfolio Website →</a>
-    <p class="cover__tagline">Business Analysis | Data Modeling | ERP &amp; BI Automation Solutions</p>
-    <div class="cover__contacts">
-      <span>✉ Yajiel888@outlook.com</span>
-      <span>💼 linkedin.com/in/yajie-liu-cpa-ca-6932b6194</span>
+  <!-- 顶部导航 -->
+  <header class="nav">
+    <div class="container nav__inner">
+      <a href="#top" class="nav__logo">YL</a>
+      <nav class="nav__links">
+        <a href="#about">About</a>
+        <a href="#projects">Projects</a>
+        <a href="#contact">Contact</a>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark/light mode">🌙</button>
+      </nav>
     </div>
   </header>
 
-  <!-- Project 1 -->
-  <div class="project">
-    <div class="project__intro">
-      <span class="project-num">Project 1</span>
-      <div class="project__header">
-        <h3 class="project__title">Financial Performance Dashboard</h3>
-      </div>
-      <div class="project__tags">
-        <span class="project__tag">Power BI</span>
-        <span class="project__tag">Financial Analysis</span>
-        <span class="project__tag">Data Modelling</span>
-        <span class="project__tag">DAX</span>
-      </div>
-      <div class="project__desc">
-        <p>This dashboard focuses on <strong>revenue performance</strong> by combining <strong>trend analysis</strong>, <strong>Budget vs. Actual comparisons</strong>, and <strong>business-line variance analysis</strong>. It helps stakeholders understand the <strong>drivers behind financial results</strong>, <strong>identify revenue opportunities</strong>, <strong>investigate unfavorable variances</strong>, and support data-driven business decisions.</p>
-        <p><strong>Interactive slicers</strong> and <strong>automated DAX measures</strong> dynamically update all visuals, providing an efficient and scalable reporting experience.</p>
+  <!-- Hero -->
+  <section id="top" class="hero">
+    <div class="container">
+      <p class="hero__eyebrow">Business Analysis | Data Modeling | ERP &amp; BI Automation Solutions</p>
+      <h1 class="hero__title">Hi, I'm <span class="accent">Yajie Liu</span>, CPA </h1>
+      <p class="hero__subtitle">
+        Transforming financial and operational data into actionable business insights.
+      </p>
+      <div class="hero__actions">
+        <a href="#projects" class="btn btn--primary">View Projects →</a>
+        <a href="#contact" class="btn btn--ghost">Get in Touch</a>
       </div>
     </div>
-    <div class="img-group">
-      <div class="img-block">
-        <p class="project__img-label">Page 1 — Dashboard View</p>
-        <img src="images/powerbi-dashboard-page1.jpg" alt="Financial Performance Dashboard — Page 1" class="project__img" style="width:95%;" />
-      </div>
-      <div class="img-block">
-        <p class="project__img-label">Page 2 — Feature Overview</p>
-        <img src="images/powerbi-dashboard-page2.jpg" alt="Financial Performance Dashboard — Page 2" class="project__img" style="width:95%;" />
-      </div>
-    </div>
-  </div>
+  </section>
 
-  <!-- Project 2 -->
-  <div class="project page-break">
-    <div class="project__intro">
-      <span class="project-num">Project 2</span>
-      <div class="project__header">
-        <h3 class="project__title">Real Estate Analytics Database</h3>
+  <!-- About -->
+  <section id="about" class="section">
+    <div class="container">
+      <div class="about">
+        <div class="about__text">
+          <h2 class="section__title">About</h2>
+          <p>
+            CPA with 5+ years of experience in financial/business analysis,
+            data modeling, ERP &amp; BI Automation Solutions.
+          </p>
+          <p>
+            Experienced in translating business requirements into data-driven solutions,
+            automating financial processes, and developing reporting and analytics solutions
+            using Power BI, Python, and SQL.
+          </p>
+          <p>
+            Currently pursuing a part-time Master of Science in Data Analytics Engineering at
+            Northeastern University.
+          </p>
+          <p>
+            Passionate about combining finance expertise with
+            modern analytics tools to solve business problems and support
+            data-driven decision-making.
+          </p>
+        </div>
+        <div class="about__skills">
+          <h2 class="section__title">Skills</h2>
+          <ul class="skills">
+            <li>Financial Analysis</li>
+            <li>Process Automation</li>
+            <li>Risk Assessment</li>
+            <li>Machine Learning</li>
+            <li>Data Modelling</li>
+            <li>Database Management</li>
+            <li>IFRS</li>
+            <li>GAAP</li>
+            <li>Python</li>
+            <li>SQL</li>
+            <li>R</li>
+            <li>Power BI</li>
+            <li>AI</li>
+            <li>Vibe Coding</li>
+            <li>Excel</li>
+            <li>Azure</li>
+            <li>Oracle</li>
+          </ul>
+        </div>
       </div>
-      <div class="project__tags">
-        <span class="project__tag">MySQL</span>
-        <span class="project__tag">Python</span>
-        <span class="project__tag">Database Design</span>
-        <span class="project__tag">Data Pipeline</span>
-        <span class="project__tag">SQL Analytics</span>
-      </div>
-      <div class="project__desc">
-        <p>An end-to-end database management project simulating a <strong>relational SQL database</strong> for real estate market analysis. The system enables users to <strong>query data</strong> exploring <strong>pricing trends</strong>, <strong>transaction activity</strong>, <strong>market velocity</strong>, and <strong>buyer/seller behavior</strong> across nine cities and three property types — supporting <strong>data-driven insights</strong> into market dynamics.</p>
-        <p>Built with <strong>MySQL and Python</strong>, the project demonstrates core database engineering skills: <strong>relational schema design</strong>, <strong>automated data ingestion pipelines</strong>, and <strong>business-oriented SQL analytics</strong>.</p>
-      </div>
     </div>
-    <div class="img-block">
-      <img src="images/Picture for showcase/Project 2/1.png" alt="Real Estate Analytics Database — Step 1: Entity-Relationship Diagram" class="project__img" />
-    </div>
-    <div class="img-block">
-      <img src="images/Picture for showcase/Project 2/2.png" alt="Real Estate Analytics Database — Step 1: Schema Tables" class="project__img" />
-    </div>
-    <div class="img-block">
-      <img src="images/Picture for showcase/Project 2/3.png" alt="Real Estate Analytics Database — Step 2: Data Pipeline" class="project__img" />
-    </div>
-    <div class="img-block">
-      <img src="images/Picture for showcase/Project 2/4.png" alt="Real Estate Analytics Database — Step 3: Seller Motivation Breakdown" class="project__img" />
-    </div>
-    <p style="font-size:0.8rem; color:#9aa3b8; margin-top:6px;">
-      Full project: <a href="https://ashleyliu99.github.io/PersonalWebsite/Project%203/index.html">ashleyliu99.github.io/PersonalWebsite/Project 3</a>
-    </p>
-  </div>
+  </section>
 
-  <!-- Project 3 -->
-  <div class="project page-break">
-    <div class="project__intro">
-      <span class="project-num">Project 3</span>
-      <div class="project__header">
-        <h3 class="project__title">Loan Portfolio Risk Dashboard</h3>
-      </div>
-      <div class="project__tags">
-        <span class="project__tag">Python</span>
-        <span class="project__tag">Portfolio Monitoring</span>
-        <span class="project__tag">Risk Analytics</span>
-        <span class="project__tag">Streamlit</span>
-      </div>
-      <div class="project__desc">
-        <p>This dashboard provides continuous visibility into <strong>changes in</strong> <strong>loan portfolio risk</strong> through <strong>delinquency trends</strong>, <strong>roll-rate migration analysis</strong>, and <strong>expected loss monitoring</strong>. It helps stakeholders <strong>detect deteriorating credit quality</strong> early, <strong>identify emerging risk patterns</strong>, and take timely risk mitigation actions.</p>
-        <p>Built with <strong>Python and Streamlit</strong>, the app enables <strong>dynamic filtering</strong> and <strong>real-time exploration</strong>, making it easy to identify risk patterns and take targeted action.</p>
+  <!-- Projects -->
+  <section id="projects" class="section section--alt">
+    <div class="container">
+      <h2 class="section__title">Projects</h2>
+      <p class="section__lead">A selection of my work — click any card to view the live dashboard.</p>
+
+      <!-- Cards are generated by JS from the data in script-BA.js -->
+      <div id="project-grid" class="project-grid"></div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" class="section">
+    <div class="container contact">
+      <h2 class="section__title">Contact</h2>
+      <p class="section__lead">Feel free to reach out — I'd love to connect.</p>
+      <div class="contact__links">
+        <a href="mailto:Yajiel888@outlook.com" class="contact__link">✉️ Email</a>
+        <a href="https://www.linkedin.com/in/yajie-liu-cpa-ca-6932b6194/" target="_blank" rel="noopener" class="contact__link">💼 LinkedIn</a>
       </div>
     </div>
-    <div class="img-block">
-      <p class="project__img-label">Live App — Loan Portfolio Risk Dashboard</p>
-      <img src="images/loan-portfolio-dashboard.png?v=20260630c" alt="Loan Portfolio Risk Dashboard" class="project__img" />
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <p>© <span id="year"></span> Yajie Liu, CPA · Built with HTML/CSS/JS · Hosted on GitHub Pages</p>
     </div>
-    <p style="font-size:0.8rem; color:#9aa3b8; margin-top:6px;">
-      Live app: <a href="https://loan-portfolio-risk-dashboard-yajie.streamlit.app/">loan-portfolio-risk-dashboard-yajie.streamlit.app</a>
-    </p>
-  </div>
+  </footer>
 
-  <div class="footer">
-    <p>Yajie Liu, CPA · Showcase of AI-enabled Projects · <span id="year"></span></p>
-  </div>
-
-</div>
-
-
-<script>
-  document.getElementById('year').textContent = new Date().getFullYear();
-</script>
+  <script src="script-BA.js"></script>
 </body>
 </html>
