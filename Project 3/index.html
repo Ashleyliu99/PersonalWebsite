@@ -27,7 +27,7 @@
       gap: 16px;
       margin-top: 28px;
     }
-    @media (max-width: 680px) { .schema-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 760px) { .schema-grid { grid-template-columns: 1fr; } }
 
     .schema-table {
       border: 1px solid var(--border);
@@ -39,8 +39,8 @@
     .schema-table__head {
       background: var(--accent);
       color: #fff;
-      padding: 10px 16px;
-      font-size: 0.82rem;
+      padding: 9px 14px;
+      font-size: 0.8rem;
       font-weight: 700;
       font-family: "JetBrains Mono", monospace;
       letter-spacing: 0.02em;
@@ -48,10 +48,11 @@
     .schema-table table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.8rem;
+      font-size: 0.7rem;
+      table-layout: fixed;
     }
     .schema-table td {
-      padding: 7px 16px;
+      padding: 6px 9px;
       border-bottom: 1px solid var(--border);
       vertical-align: top;
     }
@@ -60,16 +61,21 @@
       font-family: "JetBrains Mono", monospace;
       font-weight: 500;
       color: var(--accent);
-      white-space: nowrap;
+      width: 43%;
+      word-break: break-word;
     }
     .schema-table td:nth-child(2) {
       color: var(--text-muted);
       font-family: "JetBrains Mono", monospace;
-      font-size: 0.75rem;
+      font-size: 0.66rem;
+      width: 25%;
+      white-space: nowrap;
     }
     .schema-table td:nth-child(3) {
       color: var(--text-muted);
-      font-size: 0.75rem;
+      font-size: 0.66rem;
+      width: 32%;
+      overflow-wrap: anywhere;
     }
     .col-pk { color: #d97706 !important; }
     .col-fk { color: #059669 !important; }
@@ -105,8 +111,8 @@
     .code-block pre { margin: 0; border-radius: 0; }
     .code-block pre code.hljs {
       font-family: "JetBrains Mono", monospace;
-      font-size: 0.8rem;
-      line-height: 1.65;
+      font-size: 0.72rem;
+      line-height: 1.6;
     }
 
     /* ── Chart cards ── */
@@ -118,18 +124,33 @@
       overflow: hidden;
     }
     .chart-card__title {
-      padding: 14px 18px 4px;
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      letter-spacing: 0.02em;
+      padding: 15px 16px 3px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--text);
+      text-align: center;
     }
     .chart-card__body { padding: 8px 16px 16px; }
+    /* fixed-size chart figure — both business-analysis charts render the same size */
+    .chart-card--fig .chart-card__title {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .chart-card--fig .chart-card__body { height: 239px; padding-bottom: 12px; }
+    /* keep each row's code block and chart the same height */
+    .query-block .code-block {
+      min-height: 277px;
+      background: #22272e;
+      display: flex;
+      flex-direction: column;
+    }
+    .query-block .code-block pre { flex: 1; }
 
     /* ── Query block layout ── */
     .query-block {
       display: grid;
-      grid-template-columns: 1fr 1.2fr;
+      grid-template-columns: 1fr 1fr;
       gap: 18px;
       align-items: start;
     }
@@ -185,6 +206,8 @@
       color: var(--accent);
       font-weight: 700;
     }
+    /* full-width insight list — one bullet per row, spanning the full content width */
+    .insight-list--wide { margin-top: 20px; gap: 8px; }
 
     /* ── Divider between queries ── */
     .query-divider {
@@ -193,14 +216,20 @@
       margin: 44px 0;
     }
 
-    /* ── Step label ── */
+    /* ── Step label + heading ── */
     .step-label {
-      font-size: 0.82rem;
-      font-weight: 600;
+      font-size: 1.05rem;
+      font-weight: 700;
       color: var(--accent);
-      letter-spacing: 0.06em;
+      letter-spacing: 0.04em;
       text-transform: uppercase;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
+    }
+    .step-heading {
+      font-size: clamp(1.15rem, 2.3vw, 1.4rem);
+      font-weight: 600;
+      letter-spacing: -0.2px;
+      margin-bottom: 10px;
     }
 
     /* ── Pipeline note ── */
@@ -222,9 +251,9 @@
   <!-- Nav -->
   <header class="nav">
     <div class="container nav__inner">
-      <a href="../index.html" class="nav__logo">YL</a>
+      <a href="../index-BA.html" class="nav__logo">YL</a>
       <nav class="nav__links">
-        <a href="../index.html#projects">← Back to Projects</a>
+        <a href="../index-BA.html#projects">← Back to Projects</a>
         <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark/light mode">🌙</button>
       </nav>
     </div>
@@ -246,7 +275,7 @@
         <strong>relational schema design</strong>, <strong>automated data ingestion pipelines</strong>, and
         <strong>business-oriented SQL analytics</strong>.
       </p>
-      <div class="card__tags" style="margin-bottom: 0;">
+      <div class="card__tags" style="margin-bottom: 8px;">
         <span class="card__tag">MySQL</span>
         <span class="card__tag">Python</span>
         <span class="card__tag">Database Design</span>
@@ -259,8 +288,8 @@
   <!-- ── Step 1: Database Design ── -->
   <section class="section section--alt" style="padding-top: 32px;">
     <div class="container">
-      <p class="step-label">Step 1</p>
-      <h2 class="section__title">Database Design</h2>
+      <p class="step-label">Step 1 · Data Modeling</p>
+      <h2 class="section__title step-heading">Database Design</h2>
       <p class="section__lead" style="max-width: 680px;">
         A normalized relational schema with 6 tables and foreign key constraints, modelling the full lifecycle
         from user registration through property listing to final transaction.
@@ -315,8 +344,8 @@
   <!-- ── Step 2: Data Pipeline ── -->
   <section class="section" style="padding-top: 32px;">
     <div class="container">
-      <p class="step-label">Step 2</p>
-      <h2 class="section__title">Data Pipeline</h2>
+      <p class="step-label">Step 2 · Data Pipeline</p>
+      <h2 class="section__title step-heading">Python Data Ingestion</h2>
       <p class="section__lead" style="max-width: 680px;">
         A Python script reads 6 CSV files and bulk-inserts all rows into MySQL.
         Tables are loaded in foreign key dependency order to avoid constraint violations.
@@ -353,8 +382,8 @@ for table in CSV_TABLES:
   <!-- ── Step 3: Business Analysis ── -->
   <section class="section section--alt" style="padding-top: 32px; padding-bottom: 56px;">
     <div class="container">
-      <p class="step-label">Step 3</p>
-      <h2 class="section__title">Business Analysis</h2>
+      <p class="step-label">Step 3 · SQL Analytics</p>
+      <h2 class="section__title step-heading">Business Analysis</h2>
       <p class="section__lead" style="max-width: 680px;">
         SQL queries written to answer real business questions — using <code>GROUP BY</code>, <code>JOIN</code>,
         aggregate functions, and subqueries to surface market intelligence.
@@ -370,13 +399,12 @@ for table in CSV_TABLES:
       </div>
 
       <div class="query-block">
-        <div>
-          <div class="code-block">
-            <div class="code-block__header">
-              <div class="code-block__dots"><span></span><span></span><span></span></div>
-              <div class="code-block__lang">SQL</div>
-            </div>
-            <pre><code class="language-sql">SELECT
+        <div class="code-block">
+          <div class="code-block__header">
+            <div class="code-block__dots"><span></span><span></span><span></span></div>
+            <div class="code-block__lang">SQL</div>
+          </div>
+          <pre><code class="language-sql">SELECT
     selling_motivation,
     COUNT(*) AS total_sellers,
     ROUND(
@@ -388,21 +416,21 @@ FROM sellers
 GROUP BY selling_motivation
 ORDER BY total_sellers DESC;
 </code></pre>
-          </div>
-          <ul class="insight-list">
-            <li>Relocation is the #1 driver (36%) — job moves fuel supply</li>
-            <li>Downsizing + estate sales = 37% — aging homeowner cohort</li>
-            <li>Investment exits at 8.7% suggest some cooling of investor activity</li>
-          </ul>
         </div>
 
-        <div class="chart-card">
+        <div class="chart-card chart-card--fig">
           <div class="chart-card__title">Seller Motivation Distribution</div>
-          <div class="chart-card__body" style="max-width: 320px; margin: 0 auto;">
+          <div class="chart-card__body">
             <canvas id="chartQ4"></canvas>
           </div>
         </div>
       </div>
+
+      <ul class="insight-list insight-list--wide">
+        <li>Relocation is the #1 driver (36%) — job moves fuel supply</li>
+        <li>Downsizing + estate sales = 37% — aging homeowner cohort</li>
+        <li>Investment exits at 8.7% suggest some cooling of investor activity</li>
+      </ul>
 
       <div class="query-divider"></div>
 
@@ -416,44 +444,39 @@ ORDER BY total_sellers DESC;
       </div>
 
       <div class="query-block">
-        <div>
-          <div class="code-block">
-            <div class="code-block__header">
-              <div class="code-block__dots"><span></span><span></span><span></span></div>
-              <div class="code-block__lang">SQL</div>
-            </div>
-            <pre><code class="language-sql">SELECT
+        <div class="code-block">
+          <div class="code-block__header">
+            <div class="code-block__dots"><span></span><span></span><span></span></div>
+            <div class="code-block__lang">SQL</div>
+          </div>
+          <pre><code class="language-sql">SELECT
     h.city,
     h.property_type,
-    COUNT(*)                   AS total_sold,
-    FORMAT(AVG(h.listing_price), 0)
-                               AS avg_list_price,
-    FORMAT(AVG(t.sale_price), 0)
-                               AS avg_sale_price,
-    ROUND(
-      AVG(t.sale_price / h.listing_price * 100),
-      1
-    )                          AS sale_to_list_ratio
+    COUNT(*) AS total_sold,
+    FORMAT(AVG(h.listing_price), 0) AS avg_list_price,
+    FORMAT(AVG(t.sale_price), 0)    AS avg_sale_price,
+    ROUND(AVG(t.sale_price / h.listing_price * 100), 1)
+        AS sale_to_list_ratio
 FROM transactions t
 JOIN houses h ON t.house_id = h.house_id
 GROUP BY h.city, h.property_type
 ORDER BY sale_to_list_ratio DESC;
 </code></pre>
-          </div>
-          <ul class="insight-list">
-            <li>Condos in Bellevue fetch 102.4% of asking — highest competition</li>
-            <li>Issaquah single-family homes sell at 102.1% — strong demand suburb</li>
-            <li>Sammamish townhouses at 98.1% are the only segment below list price</li>
-          </ul>
         </div>
 
-        <div class="chart-card">
-          <div class="chart-card__title">Sale-to-List Ratio by Property Type &amp; City (%)</div>
+        <div class="chart-card chart-card--fig">
+          <div class="chart-card__title">Sale-to-List Ratio (%)</div>
           <div class="chart-card__body">
             <canvas id="chartQ2"></canvas>
           </div>
         </div>
       </div>
+
+      <ul class="insight-list insight-list--wide">
+        <li>Condos in Bellevue fetch 102.4% of asking — highest competition</li>
+        <li>Issaquah single-family homes sell at 102.1% — strong demand suburb</li>
+        <li>Sammamish townhouses at 98.1% are the only segment below list price</li>
+      </ul>
 
     </div>
   </section>
@@ -500,6 +523,7 @@ ORDER BY sale_to_list_ratio DESC;
         }]
       },
       options: {
+        maintainAspectRatio: false,
         cutout: '62%',
         plugins: {
           legend: {
@@ -545,6 +569,7 @@ ORDER BY sale_to_list_ratio DESC;
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
           legend: {
             position: 'bottom',
